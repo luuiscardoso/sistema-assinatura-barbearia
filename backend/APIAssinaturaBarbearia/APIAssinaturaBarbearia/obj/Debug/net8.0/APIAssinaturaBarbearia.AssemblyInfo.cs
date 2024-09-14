@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("APIAssinaturaBarbearia")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c76d7ccda672ed7c2a82d7b39dfbe82a1208ec44")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+82651f62a71975c24c0575ec3a13c703cdccd0ba")]
 [assembly: System.Reflection.AssemblyProductAttribute("APIAssinaturaBarbearia")]
 [assembly: System.Reflection.AssemblyTitleAttribute("APIAssinaturaBarbearia")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
