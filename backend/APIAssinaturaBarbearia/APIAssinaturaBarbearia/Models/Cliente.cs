@@ -1,9 +1,19 @@
-﻿namespace APIAssinaturaBarbearia.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace APIAssinaturaBarbearia.Models
 {
     public class Cliente
     {
         public int ClienteId { get; set; }
-        private int Cpf { get; set; }
+
+        [Required(ErrorMessage = "O CPF é obrigatório.")]
+        [StringLength(11)]
+        [RegularExpression(@"^\d{11}$", ErrorMessage = "O CPF deve conter exatamente 11 números.")]
+        public string? Cpf { get; set; }
+
+        [Required(ErrorMessage = "O nome é obrigatório.")]
+        [StringLength(80)]
+        public string? Nome { get; set; }
 
         public Assinatura? Assinatura { get; set; }
 

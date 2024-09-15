@@ -4,6 +4,7 @@ using APIAssinaturaBarbearia.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APIAssinaturaBarbearia.Migrations
 {
     [DbContext(typeof(BdContext))]
-    partial class BdContextModelSnapshot : ModelSnapshot
+    [Migration("20240915144014_AjustandoTabelaCliente")]
+    partial class AjustandoTabelaCliente
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,7 +43,7 @@ namespace APIAssinaturaBarbearia.Migrations
                         .HasColumnType("bit");
 
                     b.Property<TimeSpan>("TempoRestante")
-                        .HasColumnType("time(0)");
+                        .HasColumnType("time");
 
                     b.HasKey("AssinaturaId");
 
@@ -58,15 +61,8 @@ namespace APIAssinaturaBarbearia.Migrations
                     b.Property<int>("AssinaturaId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Cpf")
-                        .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
+                    b.Property<int>("Cpf")
+                        .HasColumnType("int");
 
                     b.HasKey("ClienteId");
 
