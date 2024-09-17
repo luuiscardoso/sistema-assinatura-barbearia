@@ -1,13 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 
 namespace APIAssinaturaBarbearia.Models
 {
     public class Assinatura
     {
-        public int AssinaturaId { get; set; }
+        public Assinatura(DateTime inicio, DateTime fim, bool status)
+        {
+            Inicio = inicio;
+            Fim = fim;
+            Status = status;
+        }
 
-        [Column(TypeName = "time(0)")]
-        public TimeSpan TempoRestante {  get; set; }
+        public int AssinaturaId { get; set; }
 
         public DateTime Inicio { get; set; }
         public DateTime Fim { get; set; }

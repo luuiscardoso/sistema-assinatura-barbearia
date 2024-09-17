@@ -3,16 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\luisc\\OneDrive\\ProjetoBarbearia\\AssinaturaBarbearia\\backend\\APIAssinaturaBarbearia\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{BC523C13-E733-47FB-8644-F44B6B91D489}|APIAssinaturaBarbearia\\APIAssinaturaBarbearia.csproj|c:\\users\\luisc\\onedrive\\projetobarbearia\\assinaturabarbearia\\backend\\apiassinaturabarbearia\\apiassinaturabarbearia\\controllers\\assinaturascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BC523C13-E733-47FB-8644-F44B6B91D489}|APIAssinaturaBarbearia\\APIAssinaturaBarbearia.csproj|solutionrelative:apiassinaturabarbearia\\controllers\\assinaturascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{BC523C13-E733-47FB-8644-F44B6B91D489}|APIAssinaturaBarbearia\\APIAssinaturaBarbearia.csproj|c:\\users\\luisc\\onedrive\\projetobarbearia\\assinaturabarbearia\\backend\\apiassinaturabarbearia\\apiassinaturabarbearia\\models\\cliente.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BC523C13-E733-47FB-8644-F44B6B91D489}|APIAssinaturaBarbearia\\APIAssinaturaBarbearia.csproj|solutionrelative:apiassinaturabarbearia\\models\\cliente.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{BC523C13-E733-47FB-8644-F44B6B91D489}|APIAssinaturaBarbearia\\APIAssinaturaBarbearia.csproj|c:\\users\\luisc\\onedrive\\projetobarbearia\\assinaturabarbearia\\backend\\apiassinaturabarbearia\\apiassinaturabarbearia\\models\\assinatura.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BC523C13-E733-47FB-8644-F44B6B91D489}|APIAssinaturaBarbearia\\APIAssinaturaBarbearia.csproj|solutionrelative:apiassinaturabarbearia\\models\\assinatura.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BC523C13-E733-47FB-8644-F44B6B91D489}|APIAssinaturaBarbearia\\APIAssinaturaBarbearia.csproj|c:\\users\\luisc\\onedrive\\projetobarbearia\\assinaturabarbearia\\backend\\apiassinaturabarbearia\\apiassinaturabarbearia\\models\\cliente.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BC523C13-E733-47FB-8644-F44B6B91D489}|APIAssinaturaBarbearia\\APIAssinaturaBarbearia.csproj|solutionrelative:apiassinaturabarbearia\\models\\cliente.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{BC523C13-E733-47FB-8644-F44B6B91D489}|APIAssinaturaBarbearia\\APIAssinaturaBarbearia.csproj|c:\\users\\luisc\\onedrive\\projetobarbearia\\assinaturabarbearia\\backend\\apiassinaturabarbearia\\apiassinaturabarbearia\\controllers\\assinaturascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BC523C13-E733-47FB-8644-F44B6B91D489}|APIAssinaturaBarbearia\\APIAssinaturaBarbearia.csproj|solutionrelative:apiassinaturabarbearia\\controllers\\assinaturascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BC523C13-E733-47FB-8644-F44B6B91D489}|APIAssinaturaBarbearia\\APIAssinaturaBarbearia.csproj|c:\\users\\luisc\\onedrive\\projetobarbearia\\assinaturabarbearia\\backend\\apiassinaturabarbearia\\apiassinaturabarbearia\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BC523C13-E733-47FB-8644-F44B6B91D489}|APIAssinaturaBarbearia\\APIAssinaturaBarbearia.csproj|solutionrelative:apiassinaturabarbearia\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -27,12 +31,38 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Cliente.cs",
+              "DocumentMoniker": "C:\\Users\\luisc\\OneDrive\\ProjetoBarbearia\\AssinaturaBarbearia\\backend\\APIAssinaturaBarbearia\\APIAssinaturaBarbearia\\Models\\Cliente.cs",
+              "RelativeDocumentMoniker": "APIAssinaturaBarbearia\\Models\\Cliente.cs",
+              "ToolTip": "C:\\Users\\luisc\\OneDrive\\ProjetoBarbearia\\AssinaturaBarbearia\\backend\\APIAssinaturaBarbearia\\APIAssinaturaBarbearia\\Models\\Cliente.cs",
+              "RelativeToolTip": "APIAssinaturaBarbearia\\Models\\Cliente.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAABkAAAATAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-14T18:41:44.606Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\luisc\\OneDrive\\ProjetoBarbearia\\AssinaturaBarbearia\\backend\\APIAssinaturaBarbearia\\APIAssinaturaBarbearia\\Program.cs",
+              "RelativeDocumentMoniker": "APIAssinaturaBarbearia\\Program.cs",
+              "ToolTip": "C:\\Users\\luisc\\OneDrive\\ProjetoBarbearia\\AssinaturaBarbearia\\backend\\APIAssinaturaBarbearia\\APIAssinaturaBarbearia\\Program.cs",
+              "RelativeToolTip": "APIAssinaturaBarbearia\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAxAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-16T19:42:12.954Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "AssinaturasController.cs",
               "DocumentMoniker": "C:\\Users\\luisc\\OneDrive\\ProjetoBarbearia\\AssinaturaBarbearia\\backend\\APIAssinaturaBarbearia\\APIAssinaturaBarbearia\\Controllers\\AssinaturasController.cs",
               "RelativeDocumentMoniker": "APIAssinaturaBarbearia\\Controllers\\AssinaturasController.cs",
               "ToolTip": "C:\\Users\\luisc\\OneDrive\\ProjetoBarbearia\\AssinaturaBarbearia\\backend\\APIAssinaturaBarbearia\\APIAssinaturaBarbearia\\Controllers\\AssinaturasController.cs",
               "RelativeToolTip": "APIAssinaturaBarbearia\\Controllers\\AssinaturasController.cs",
-              "ViewState": "AQIAABEAAAAAAAAAAAAQwCcAAAALAAAA",
+              "ViewState": "AQIAADMAAAAAAAAAAAAhwEEAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-09-15T15:19:43.729Z",
               "EditorCaption": ""
@@ -45,22 +75,9 @@
               "RelativeDocumentMoniker": "APIAssinaturaBarbearia\\Models\\Assinatura.cs",
               "ToolTip": "C:\\Users\\luisc\\OneDrive\\ProjetoBarbearia\\AssinaturaBarbearia\\backend\\APIAssinaturaBarbearia\\APIAssinaturaBarbearia\\Models\\Assinatura.cs",
               "RelativeToolTip": "APIAssinaturaBarbearia\\Models\\Assinatura.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAmAAAA",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAxwA4AAAAiAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-09-15T15:04:33.102Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Cliente.cs",
-              "DocumentMoniker": "C:\\Users\\luisc\\OneDrive\\ProjetoBarbearia\\AssinaturaBarbearia\\backend\\APIAssinaturaBarbearia\\APIAssinaturaBarbearia\\Models\\Cliente.cs",
-              "RelativeDocumentMoniker": "APIAssinaturaBarbearia\\Models\\Cliente.cs",
-              "ToolTip": "C:\\Users\\luisc\\OneDrive\\ProjetoBarbearia\\AssinaturaBarbearia\\backend\\APIAssinaturaBarbearia\\APIAssinaturaBarbearia\\Models\\Cliente.cs",
-              "RelativeToolTip": "APIAssinaturaBarbearia\\Models\\Cliente.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAtAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-14T18:41:44.606Z",
               "EditorCaption": ""
             }
           ]

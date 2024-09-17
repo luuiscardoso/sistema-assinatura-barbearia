@@ -1,9 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace APIAssinaturaBarbearia.Models
 {
     public class Cliente
     {
+        public Cliente(string? cpf, string? nome, int assinaturaId)
+        {
+            Cpf = cpf;
+            Nome = nome;
+            AssinaturaId = assinaturaId;
+        }
+
         public int ClienteId { get; set; }
 
         [Required(ErrorMessage = "O CPF é obrigatório.")]
@@ -15,6 +23,7 @@ namespace APIAssinaturaBarbearia.Models
         [StringLength(80)]
         public string? Nome { get; set; }
 
+        [JsonIgnore]
         public Assinatura? Assinatura { get; set; }
 
         public int AssinaturaId { get; set; }
