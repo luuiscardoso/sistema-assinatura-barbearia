@@ -29,6 +29,8 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Assinatura>> ObterTodasAssinaturas()
         {
+
+            throw new InvalidOperationException("testando filtro de excecao em actions");
             IEnumerable<Assinatura> assinaturas = _context.Assinaturas.Include(a => a.Cliente).ToList();
 
             if(!assinaturas.Any()) return NotFound("Não existe nenhuma assinatura cadastrada.");
@@ -65,10 +67,38 @@ namespace APIAssinaturaBarbearia.Controllers
             
         }
 
-        //[HttpPut("Alterar")]
-        //public ActionResult<Assinatura> AlterarAssinatura(Assinatura assinatura)
-        //{
+        [HttpPut("Alterar/{id:int}")]
+        public ActionResult<Assinatura> AlterarAssinatura(int id, Assinatura assinatura)
+        {
+            if (id != assinatura.AssinaturaId) return BadRequest("Os IDs não correspondem");
 
-        //}
+            Assinatura? assinaturaBd = _context.Assinaturas.Include(a => a.Cliente).
+                                                            FirstOrDefault(a => a.AssinaturaId == assinatura.AssinaturaId);
+
+            if (assinaturaBd == null) return BadRequest("Assinatura não encontrada.");
+
+            assinaturaBd.Status = assinatura.Status;
+            assinaturaBd.Fim = assinatura.Fim;
+            assinaturaBd.Cliente.Nome = assinatura.Cliente.Nome;
+            assinaturaBd.Cliente.Cpf = assinatura.Cliente.Cpf;
+
+            _context.Entry(assinaturaBd).State = EntityState.Modified;
+            _context.SaveChanges();
+
+            return Ok();
+        }
+
+        [HttpDelete("Deletar/{id:int:min(1)}")]
+        public ActionResult ExcluirAssinatura(int id)
+        {
+            Assinatura? assinatura = _context.Assinaturas.Find(id);
+
+            if (assinatura == null) return BadRequest("Assinatura não encontrada.");
+
+            _context.Assinaturas.Remove(assinatura);
+            _context.SaveChanges();
+
+            return NoContent();
+        }
     }
 }

@@ -1,4 +1,6 @@
 using APIAssinaturaBarbearia.Data;
+using APIAssinaturaBarbearia.Filtros;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using System.Text.Json.Serialization;
@@ -13,8 +15,14 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add(typeof(FiltroExcecao));
+}
+);
 
-string? conexao = builder.Configuration.GetConnectionString("DefaultConnection");
+
+string ? conexao = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<BdContext>(options => options.UseSqlServer(conexao));
 
 var app = builder.Build();
