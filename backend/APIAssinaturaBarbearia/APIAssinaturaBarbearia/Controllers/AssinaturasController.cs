@@ -1,5 +1,9 @@
 ﻿using APIAssinaturaBarbearia.Data;
+using APIAssinaturaBarbearia.DTO;
 using APIAssinaturaBarbearia.Models;
+using AutoMapper;
+using Azure;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +14,11 @@ namespace APIAssinaturaBarbearia.Controllers
     public class AssinaturasController : ControllerBase
     {
         private readonly BdContext _context;
-        public AssinaturasController(BdContext bdContext)
+        private readonly IMapper _mapper;
+        public AssinaturasController(BdContext bdContext, IMapper mapper)
         {
             _context = bdContext;
+            _mapper = mapper;
         }
         // /assinaturas/id
         [HttpGet("{id:int}")]
@@ -29,11 +35,9 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Assinatura>> ObterTodasAssinaturas()
         {
-
-            throw new InvalidOperationException("testando filtro de excecao em actions");
             IEnumerable<Assinatura> assinaturas = _context.Assinaturas.Include(a => a.Cliente).ToList();
 
-            if(!assinaturas.Any()) return NotFound("Não existe nenhuma assinatura cadastrada.");
+            if (!assinaturas.Any()) return NotFound("Não existe nenhuma assinatura cadastrada.");
 
             return Ok(assinaturas);
         }
@@ -41,51 +45,52 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpPost("Criar")]
         public ActionResult<Assinatura> CriarAssinatura(Cliente cliente)
         {
-            try
+            Assinatura? novaAssinatura = new Assinatura
             {
-                Assinatura? novaAssinatura = new Assinatura(DateTime.Now,
-                                                            DateTime.Now.AddMonths(1),
-                                                            true);
+                Inicio = DateTime.Now,
+                Fim = DateTime.Now.AddMonths(1),
+                Status = true
+            };
 
-                _context.Assinaturas.Add(novaAssinatura);
-                _context.SaveChanges();
-
-                Cliente? novoCliente = new Cliente(cliente.Cpf, cliente.Nome, novaAssinatura.AssinaturaId);
-
-                novoCliente.Assinatura = novaAssinatura;
-                novaAssinatura.Cliente = novoCliente;
-
-                _context.Clientes.Add(novoCliente);
-                _context.SaveChanges();
-
-                return Ok(_context.Assinaturas.Include(a => a.Cliente).FirstOrDefault(a => a.AssinaturaId == novaAssinatura.AssinaturaId));
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            
-        }
-
-        [HttpPut("Alterar/{id:int}")]
-        public ActionResult<Assinatura> AlterarAssinatura(int id, Assinatura assinatura)
-        {
-            if (id != assinatura.AssinaturaId) return BadRequest("Os IDs não correspondem");
-
-            Assinatura? assinaturaBd = _context.Assinaturas.Include(a => a.Cliente).
-                                                            FirstOrDefault(a => a.AssinaturaId == assinatura.AssinaturaId);
-
-            if (assinaturaBd == null) return BadRequest("Assinatura não encontrada.");
-
-            assinaturaBd.Status = assinatura.Status;
-            assinaturaBd.Fim = assinatura.Fim;
-            assinaturaBd.Cliente.Nome = assinatura.Cliente.Nome;
-            assinaturaBd.Cliente.Cpf = assinatura.Cliente.Cpf;
-
-            _context.Entry(assinaturaBd).State = EntityState.Modified;
+            _context.Assinaturas.Add(novaAssinatura);
             _context.SaveChanges();
 
-            return Ok();
+            Cliente? novoCliente = new Cliente(cliente.Cpf, cliente.Nome, novaAssinatura.AssinaturaId);
+
+            novoCliente.Assinatura = novaAssinatura;
+            novaAssinatura.Cliente = novoCliente;
+
+            _context.Clientes.Add(novoCliente);
+            _context.SaveChanges();
+
+            return Ok(_context.Assinaturas.Include(a => a.Cliente).FirstOrDefault(a => a.AssinaturaId == novaAssinatura.AssinaturaId));
+        }
+
+
+        [HttpPatch("Alterar/{id:int}")]
+        public ActionResult<Assinatura> AlterarAssinatura(int id, JsonPatchDocument<AssinaturaUpdateDTO> patchDoc)
+        {
+            if (patchDoc is null || patchDoc.Operations.Count == 0) return BadRequest("JSON Patch nulo ou vazio.");
+
+            Assinatura? assinaturaBd = _context.Assinaturas.Include(a => a.Cliente).FirstOrDefault(a => a.AssinaturaId.Equals(id));
+
+            AssinaturaUpdateDTO assinaturaDto = _mapper.Map<AssinaturaUpdateDTO>(assinaturaBd);
+
+            patchDoc.ApplyTo(assinaturaDto, ModelState);
+
+            if(!ModelState.IsValid || !TryValidateModel(assinaturaDto)) return BadRequest(ModelState);
+
+            if(assinaturaDto.Cpf != null || assinaturaDto.Nome != null)
+            {
+                assinaturaBd.Cliente.Cpf = assinaturaDto.Cpf ?? assinaturaBd.Cliente.Cpf;
+                assinaturaBd.Cliente.Nome = assinaturaDto.Nome ?? assinaturaBd.Cliente.Nome;
+            }
+
+            _mapper.Map(assinaturaDto, assinaturaBd);
+
+            _context.SaveChanges();
+
+            return NoContent();
         }
 
         [HttpDelete("Deletar/{id:int:min(1)}")]
@@ -102,3 +107,4 @@ namespace APIAssinaturaBarbearia.Controllers
         }
     }
 }
+

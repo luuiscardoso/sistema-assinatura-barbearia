@@ -1,4 +1,5 @@
 using APIAssinaturaBarbearia.Data;
+using APIAssinaturaBarbearia.DTO.Mappings;
 using APIAssinaturaBarbearia.Filtros;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
@@ -9,21 +10,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers().AddJsonOptions(options => 
-    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add(typeof(FiltroExcecao));
+})
+.AddJsonOptions(options => 
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
+)
+.AddNewtonsoftJson(options =>
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add(typeof(FiltroExcecao));
-}
-);
 
-
-string ? conexao = builder.Configuration.GetConnectionString("DefaultConnection");
+string? conexao = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<BdContext>(options => options.UseSqlServer(conexao));
+
+builder.Services.AddAutoMapper(typeof(AssinaturaMappingProfile));
 
 var app = builder.Build();
 
