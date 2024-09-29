@@ -424,3 +424,5 @@ FodyWeavers.xsd
 backend/APIAssinaturaBarbearia/.vs/
 backend/APIAssinaturaBarbearia/APIAssinaturaBarbearia/appsettings.Development.json
 backend/APIAssinaturaBarbearia/APIAssinaturaBarbearia/appsettings.json
+backend/APIAssinaturaBarbearia/APIAssinaturaBarbearia/obj/
+backend/APIAssinaturaBarbearia/APIAssinaturaBarbearia/bin/
