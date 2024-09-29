@@ -1,6 +1,8 @@
 ﻿using APIAssinaturaBarbearia.Data;
 using APIAssinaturaBarbearia.DTO;
 using APIAssinaturaBarbearia.Models;
+using APIAssinaturaBarbearia.Repositories;
+using APIAssinaturaBarbearia.Repositories.Interfaces;
 using AutoMapper;
 using Azure;
 using Microsoft.AspNetCore.JsonPatch;
@@ -13,20 +15,20 @@ namespace APIAssinaturaBarbearia.Controllers
     [Route("[controller]")]
     public class AssinaturasController : ControllerBase
     {
-        private readonly BdContext _context;
+        private readonly IAssinaturaRepositorie _assinaturaRepository;
         private readonly IMapper _mapper;
-        public AssinaturasController(BdContext bdContext, IMapper mapper)
+        public AssinaturasController(IAssinaturaRepositorie assinaturaRepository, IMapper mapper)
         {
-            _context = bdContext;
+            _assinaturaRepository = assinaturaRepository;
             _mapper = mapper;
         }
         // /assinaturas/id
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int:min(1)}")]
         public ActionResult<Assinatura> ObterAssinaturaPorId(int id)
         {
-            if (_context.Assinaturas.Find(id) == null) return NotFound("Assinatura não encontrada.");
+            if (_assinaturaRepository.Obter(id) == null) return NotFound("Assinatura não encontrada.");
 
-            Assinatura? assinatura = _context.Assinaturas.Include(a => a.Cliente).FirstOrDefault(a => a.AssinaturaId == id);
+            Assinatura? assinatura = _assinaturaRepository.Obter(id);
 
             return Ok(assinatura);
         }
@@ -35,7 +37,7 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Assinatura>> ObterTodasAssinaturas()
         {
-            IEnumerable<Assinatura> assinaturas = _context.Assinaturas.Include(a => a.Cliente).ToList();
+            IEnumerable<Assinatura> assinaturas = _assinaturaRepository.ObterTodas();
 
             if (!assinaturas.Any()) return NotFound("Não existe nenhuma assinatura cadastrada.");
 
@@ -43,52 +45,42 @@ namespace APIAssinaturaBarbearia.Controllers
         }
 
         [HttpPost("Criar")]
-        public ActionResult<Assinatura> CriarAssinatura(Cliente cliente)
+        public ActionResult CriarAssinatura(Cliente cliente)
         {
-            Assinatura? novaAssinatura = new Assinatura
-            {
-                Inicio = DateTime.Now,
-                Fim = DateTime.Now.AddMonths(1),
-                Status = true
-            };
+            IEnumerable<Assinatura> assinaturas = _assinaturaRepository.ObterTodas();
 
-            _context.Assinaturas.Add(novaAssinatura);
-            _context.SaveChanges();
+            Assinatura? assinatura = assinaturas.FirstOrDefault(a => a.Cliente.Cpf.Equals(cliente.Cpf))/*Where(a => a.Cliente.Cpf.Equals(cliente.Cpf))*/;
+            if (assinatura is not null) return BadRequest("Esse cliente já possui assinatura.");
 
-            Cliente? novoCliente = new Cliente(cliente.Cpf, cliente.Nome, novaAssinatura.AssinaturaId);
-
-            novoCliente.Assinatura = novaAssinatura;
-            novaAssinatura.Cliente = novoCliente;
-
-            _context.Clientes.Add(novoCliente);
-            _context.SaveChanges();
-
-            return Ok(_context.Assinaturas.Include(a => a.Cliente).FirstOrDefault(a => a.AssinaturaId == novaAssinatura.AssinaturaId));
+            _assinaturaRepository.Criar(cliente);
+            return NoContent();
         }
 
 
-        [HttpPatch("Alterar/{id:int}")]
+        [HttpPatch("Alterar/{id:int:min(1)}")]
         public ActionResult<Assinatura> AlterarAssinatura(int id, JsonPatchDocument<AssinaturaUpdateDTO> patchDoc)
         {
             if (patchDoc is null || patchDoc.Operations.Count == 0) return BadRequest("JSON Patch nulo ou vazio.");
 
-            Assinatura? assinaturaBd = _context.Assinaturas.Include(a => a.Cliente).FirstOrDefault(a => a.AssinaturaId.Equals(id));
+            Assinatura? assinaturaBd = _assinaturaRepository.Obter(id);
+
+            if (assinaturaBd is null) return NotFound("Erro ao alterar. Assinatura inexistente.");
 
             AssinaturaUpdateDTO assinaturaDto = _mapper.Map<AssinaturaUpdateDTO>(assinaturaBd);
 
             patchDoc.ApplyTo(assinaturaDto, ModelState);
 
-            if(!ModelState.IsValid || !TryValidateModel(assinaturaDto)) return BadRequest(ModelState);
+            if (!ModelState.IsValid || !TryValidateModel(assinaturaDto)) return BadRequest(ModelState);
 
-            if(assinaturaDto.Cpf != null || assinaturaDto.Nome != null)
+            if (assinaturaDto.Cpf != null || assinaturaDto.Nome != null)
             {
                 assinaturaBd.Cliente.Cpf = assinaturaDto.Cpf ?? assinaturaBd.Cliente.Cpf;
                 assinaturaBd.Cliente.Nome = assinaturaDto.Nome ?? assinaturaBd.Cliente.Nome;
             }
 
-            _mapper.Map(assinaturaDto, assinaturaBd);
+            Assinatura? assinatura = _mapper.Map(assinaturaDto, assinaturaBd);
 
-            _context.SaveChanges();
+            _assinaturaRepository.Atualizar(assinatura);
 
             return NoContent();
         }
@@ -96,12 +88,11 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpDelete("Deletar/{id:int:min(1)}")]
         public ActionResult ExcluirAssinatura(int id)
         {
-            Assinatura? assinatura = _context.Assinaturas.Find(id);
+            Assinatura? assinatura = _assinaturaRepository.Obter(id);
 
             if (assinatura == null) return BadRequest("Assinatura não encontrada.");
 
-            _context.Assinaturas.Remove(assinatura);
-            _context.SaveChanges();
+            _assinaturaRepository.Excluir(assinatura);
 
             return NoContent();
         }

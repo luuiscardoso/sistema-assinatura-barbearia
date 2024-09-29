@@ -5,13 +5,6 @@ namespace APIAssinaturaBarbearia.Models
 {
     public class Cliente
     {
-        public Cliente(string? cpf, string? nome, int assinaturaId)
-        {
-            Cpf = cpf;
-            Nome = nome;
-            AssinaturaId = assinaturaId;
-        }
-
         public int ClienteId { get; set; }
 
         [Required(ErrorMessage = "O CPF é obrigatório.")]
