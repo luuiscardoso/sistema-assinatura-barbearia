@@ -1,6 +1,8 @@
 using APIAssinaturaBarbearia.Data;
 using APIAssinaturaBarbearia.DTO.Mappings;
 using APIAssinaturaBarbearia.Filtros;
+using APIAssinaturaBarbearia.Repositories;
+using APIAssinaturaBarbearia.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
@@ -28,6 +30,7 @@ string? conexao = builder.Configuration.GetConnectionString("DefaultConnection")
 builder.Services.AddDbContext<BdContext>(options => options.UseSqlServer(conexao));
 
 builder.Services.AddAutoMapper(typeof(AssinaturaMappingProfile));
+builder.Services.AddScoped<IAssinaturaRepositorie, AssinaturaRepositorie>();
 
 var app = builder.Build();
 
