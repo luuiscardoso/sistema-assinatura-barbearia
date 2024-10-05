@@ -15,9 +15,9 @@ namespace APIAssinaturaBarbearia.Controllers
     [Route("[controller]")]
     public class AssinaturasController : ControllerBase
     {
-        private readonly IAssinaturaRepositorie _assinaturaRepository;
+        private readonly IAssinaturaRepository _assinaturaRepository;
         private readonly IMapper _mapper;
-        public AssinaturasController(IAssinaturaRepositorie assinaturaRepository, IMapper mapper)
+        public AssinaturasController(IAssinaturaRepository assinaturaRepository, IMapper mapper)
         {
             _assinaturaRepository = assinaturaRepository;
             _mapper = mapper;
@@ -26,9 +26,9 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpGet("{id:int:min(1)}")]
         public ActionResult<Assinatura> ObterAssinaturaPorId(int id)
         {
-            if (_assinaturaRepository.Obter(id) == null) return NotFound("Assinatura não encontrada.");
+            if (_assinaturaRepository.Obter(a => a.AssinaturaId == id, "Cliente") == null) return NotFound("Assinatura não encontrada.");
 
-            Assinatura? assinatura = _assinaturaRepository.Obter(id);
+            Assinatura? assinatura = _assinaturaRepository.Obter(a => a.AssinaturaId == id, "Cliente");
 
             return Ok(assinatura);
         }
@@ -37,7 +37,7 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Assinatura>> ObterTodasAssinaturas()
         {
-            IEnumerable<Assinatura> assinaturas = _assinaturaRepository.ObterTodas();
+            IEnumerable<Assinatura> assinaturas = _assinaturaRepository.Todos("Cliente");
 
             if (!assinaturas.Any()) return NotFound("Não existe nenhuma assinatura cadastrada.");
 
@@ -47,9 +47,9 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpPost("Criar")]
         public ActionResult CriarAssinatura(Cliente cliente)
         {
-            IEnumerable<Assinatura> assinaturas = _assinaturaRepository.ObterTodas();
+            IEnumerable<Assinatura> assinaturas = _assinaturaRepository.Todos("Cliente");
 
-            Assinatura? assinatura = assinaturas.FirstOrDefault(a => a.Cliente.Cpf.Equals(cliente.Cpf))/*Where(a => a.Cliente.Cpf.Equals(cliente.Cpf))*/;
+            Assinatura? assinatura = assinaturas.FirstOrDefault(a => a.Cliente.Cpf.Equals(cliente.Cpf));
             if (assinatura is not null) return BadRequest("Esse cliente já possui assinatura.");
 
             _assinaturaRepository.Criar(cliente);
@@ -62,7 +62,7 @@ namespace APIAssinaturaBarbearia.Controllers
         {
             if (patchDoc is null || patchDoc.Operations.Count == 0) return BadRequest("JSON Patch nulo ou vazio.");
 
-            Assinatura? assinaturaBd = _assinaturaRepository.Obter(id);
+            Assinatura? assinaturaBd = _assinaturaRepository.Obter(a => a.AssinaturaId == id, "Cliente");
 
             if (assinaturaBd is null) return NotFound("Erro ao alterar. Assinatura inexistente.");
 
@@ -88,7 +88,7 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpDelete("Deletar/{id:int:min(1)}")]
         public ActionResult ExcluirAssinatura(int id)
         {
-            Assinatura? assinatura = _assinaturaRepository.Obter(id);
+            Assinatura? assinatura = _assinaturaRepository.Obter(a => a.AssinaturaId == id, "Cliente");
 
             if (assinatura == null) return BadRequest("Assinatura não encontrada.");
 

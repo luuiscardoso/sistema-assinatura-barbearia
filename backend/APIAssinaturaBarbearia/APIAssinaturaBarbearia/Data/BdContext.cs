@@ -1,9 +1,10 @@
 ﻿using APIAssinaturaBarbearia.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace APIAssinaturaBarbearia.Data
 {
-    public class BdContext : DbContext 
+    public class BdContext : IdentityDbContext<Barbeiro>
     {
         public BdContext(DbContextOptions<BdContext> options) : base(options)
         {
@@ -14,6 +15,8 @@ namespace APIAssinaturaBarbearia.Data
 
         protected override void OnModelCreating(ModelBuilder md)
         {
+            base.OnModelCreating(md);
+
             md.Entity<Cliente>()
                 .HasOne(c => c.Assinatura)
                 .WithOne(a => a.Cliente)

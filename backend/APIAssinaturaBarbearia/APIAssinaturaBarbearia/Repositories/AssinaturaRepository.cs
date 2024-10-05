@@ -5,28 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APIAssinaturaBarbearia.Repositories
 {
-    public class AssinaturaRepositorie : IAssinaturaRepositorie
+    public class AssinaturaRepository : Repository<Assinatura>, IAssinaturaRepository
     {
         private readonly BdContext _context;
 
-        public AssinaturaRepositorie(BdContext context)
+        public AssinaturaRepository(BdContext context) : base(context) 
         {
             _context = context;
-        }
-        public Assinatura? Obter(int id)
-        {
-            return _context.Assinaturas.Include(a => a.Cliente)
-                                       .FirstOrDefault(a => a.AssinaturaId.Equals(id));
-        }
-        public IEnumerable<Assinatura> ObterTodas()
-        {
-            return _context.Assinaturas.Include(a => a.Cliente)
-                                       .ToList();
-        }
-        public void Atualizar(Assinatura assinatura)
-        {
-            _context.Assinaturas.Update(assinatura);
-            _context.SaveChanges();
         }
 
         public void Criar(Cliente cliente)
@@ -58,13 +43,5 @@ namespace APIAssinaturaBarbearia.Repositories
 
             transaction.Commit();
         }
-
-        public void Excluir(Assinatura assinatura)
-        {
-            _context.Assinaturas.Remove(assinatura);
-            _context.SaveChanges();
-        }
-
-
     }
 }

@@ -3,6 +3,7 @@ using APIAssinaturaBarbearia.DTO.Mappings;
 using APIAssinaturaBarbearia.Filtros;
 using APIAssinaturaBarbearia.Repositories;
 using APIAssinaturaBarbearia.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
@@ -25,12 +26,16 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<BdContext>()
+                .AddDefaultTokenProviders();
 
 string? conexao = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<BdContext>(options => options.UseSqlServer(conexao));
 
 builder.Services.AddAutoMapper(typeof(AssinaturaMappingProfile));
-builder.Services.AddScoped<IAssinaturaRepositorie, AssinaturaRepositorie>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IAssinaturaRepository, AssinaturaRepository>();
 
 var app = builder.Build();
 
