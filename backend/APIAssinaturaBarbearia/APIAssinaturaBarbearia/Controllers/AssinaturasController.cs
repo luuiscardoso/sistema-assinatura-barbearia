@@ -5,6 +5,7 @@ using APIAssinaturaBarbearia.Repositories;
 using APIAssinaturaBarbearia.Repositories.Interfaces;
 using AutoMapper;
 using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,7 @@ namespace APIAssinaturaBarbearia.Controllers
 
         // /assinaturas
         [HttpGet]
+        [Authorize]
         public ActionResult<IEnumerable<Assinatura>> ObterTodasAssinaturas()
         {
             IEnumerable<Assinatura> assinaturas = _assinaturaRepository.Todos("Cliente");
