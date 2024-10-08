@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APIAssinaturaBarbearia.Data
 {
-    public class BdContext : IdentityDbContext<Barbeiro>
+    public class BdContext : IdentityDbContext<Usuario>
     {
         public BdContext(DbContextOptions<BdContext> options) : base(options)
         {
