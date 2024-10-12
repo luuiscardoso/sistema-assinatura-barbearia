@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APIAssinaturaBarbearia.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class AssinaturasController : ControllerBase
@@ -36,7 +37,6 @@ namespace APIAssinaturaBarbearia.Controllers
 
         // /assinaturas
         [HttpGet]
-        [Authorize]
         public ActionResult<IEnumerable<Assinatura>> ObterTodasAssinaturas()
         {
             IEnumerable<Assinatura> assinaturas = _assinaturaRepository.Todos("Cliente");
