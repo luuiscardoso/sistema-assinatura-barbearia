@@ -55,11 +55,49 @@ namespace APIAssinaturaBarbearia.Controllers
 
             JwtSecurityToken token = _tokenService.GerarToken(claims, _configuration);
 
+            string refreshToken = _tokenService.GerarRefreshToken();
+
+            usuario.RefreshToken = refreshToken;
+            usuario.RefreshTokenTempoExpiracao = DateTime.UtcNow.AddMinutes(_configuration.GetSection("JWT").GetValue<int>("ValidadeRefreshTokenMinutos"));
+            
+            await _userManager.UpdateAsync(usuario);
+
             return Ok(new
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
+                RefreshToken = refreshToken,
                 Exp = token.ValidTo
             });
+        }
+
+        [HttpPost("RenovarToken")]
+        public async Task<ActionResult> RenovarToken(TokenDTO tokenDTO)
+        {
+            ClaimsPrincipal principal = _tokenService.ValidaTokenObtemClaims(tokenDTO.TokenPrincipal, _configuration);
+
+            string email = principal.FindFirst(ClaimTypes.Email)!.Value;
+
+            Usuario? usuario = await _userManager.FindByEmailAsync(email);
+
+            if (!usuario.RefreshToken.Equals(tokenDTO.RefreshToken) || DateTime.UtcNow >= usuario.RefreshTokenTempoExpiracao)
+            {
+                return BadRequest("Refresh Token inválido");
+            }
+
+            JwtSecurityToken token = _tokenService.GerarToken(principal.Claims.ToList(), _configuration);
+
+            string refreshToken = _tokenService.GerarRefreshToken();
+
+            usuario.RefreshToken = refreshToken;
+            usuario.RefreshTokenTempoExpiracao = DateTime.UtcNow.AddMinutes(_configuration.GetSection("JWT").GetValue<double>("ValidadeRefreshTokenMinutos"));
+            await _userManager.UpdateAsync(usuario);
+
+            return Ok(new
+            {
+                NovoToken = new JwtSecurityTokenHandler().WriteToken(token),
+                RefreshToken = refreshToken,
+                Exp = token.ValidTo
+            }); 
         }
 
         [HttpPost("RedefinirSenha")]
