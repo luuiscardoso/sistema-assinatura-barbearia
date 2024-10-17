@@ -17,14 +17,12 @@ namespace APIAssinaturaBarbearia.Repositories
         public void Atualizar(T entity)
         {
             _context.Set<T>().Update(entity);
-            _context.SaveChanges();
         }
 
 
         public void Excluir(T entity)
         {
             _context.Set<T>().Remove(entity);
-            _context.SaveChanges();
         }
 
         public T? Obter(Expression<Func<T, bool>> predicate, string propriedadeRelacionada)
