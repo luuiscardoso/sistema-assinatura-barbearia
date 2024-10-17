@@ -108,6 +108,7 @@ builder.Services.AddAutoMapper(typeof(AssinaturaMappingProfile));
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IAssinaturaRepository, AssinaturaRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUnityOfWork, UnityOfWork>();
 #endregion
 
 var app = builder.Build();

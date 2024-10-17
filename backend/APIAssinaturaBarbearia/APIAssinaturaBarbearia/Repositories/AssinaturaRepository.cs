@@ -16,8 +16,6 @@ namespace APIAssinaturaBarbearia.Repositories
 
         public void Criar(Cliente cliente)
         {
-            using var transaction = _context.Database.BeginTransaction();
-
             Assinatura assinatura = new Assinatura()
             {
                 Inicio = DateTime.Now,
@@ -26,7 +24,6 @@ namespace APIAssinaturaBarbearia.Repositories
             };
 
             _context.Assinaturas.Add(assinatura);
-            _context.SaveChanges();
 
             Cliente novoCliente = new Cliente()
             {
@@ -39,9 +36,6 @@ namespace APIAssinaturaBarbearia.Repositories
             novoCliente.Assinatura = assinatura;
 
             _context.Clientes.Add(novoCliente);
-            _context.SaveChanges();
-
-            transaction.Commit();
         }
     }
 }
