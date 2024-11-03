@@ -44,9 +44,9 @@ namespace APIAssinaturaBarbearia.Controllers
         }
 
         [HttpPost("Criar")]
-        public ActionResult CriarAssinatura(Cliente cliente)
+        public ActionResult CriarAssinatura(ClienteDTO clienteDto)
         {
-            assinaturaService.RegistrarNovaAssinatura(cliente);
+            assinaturaService.RegistrarNovaAssinatura(clienteDto);
 
             return NoContent();
         }

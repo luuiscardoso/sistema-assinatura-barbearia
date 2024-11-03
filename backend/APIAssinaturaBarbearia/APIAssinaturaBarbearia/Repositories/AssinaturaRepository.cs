@@ -1,4 +1,5 @@
 ﻿using APIAssinaturaBarbearia.Data;
+using APIAssinaturaBarbearia.DTO;
 using APIAssinaturaBarbearia.Models;
 using APIAssinaturaBarbearia.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ namespace APIAssinaturaBarbearia.Repositories
             _context = context;
         }
 
-        public void Criar(Cliente cliente)
+        public void Criar(ClienteDTO clienteDto)
         {
             Assinatura assinatura = new Assinatura()
             {
@@ -28,8 +29,8 @@ namespace APIAssinaturaBarbearia.Repositories
             Cliente novoCliente = new Cliente()
             {
                 AssinaturaId = assinatura.AssinaturaId,
-                Cpf = cliente.Cpf,
-                Nome = cliente.Nome
+                Cpf = clienteDto.Cpf,
+                Nome = clienteDto.Nome
             };
 
             assinatura.Cliente = novoCliente;

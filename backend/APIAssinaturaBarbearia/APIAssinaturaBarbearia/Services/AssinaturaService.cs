@@ -37,16 +37,16 @@ namespace APIAssinaturaBarbearia.Services
             return assinaturas;
         }
 
-        public void RegistrarNovaAssinatura(Cliente cliente)
+        public void RegistrarNovaAssinatura(ClienteDTO clienteDto)
         {
             IEnumerable<Assinatura> assinaturas = _uof.AssinaturaRepository.Todos("Cliente");
 
-            Assinatura? assinatura = assinaturas.FirstOrDefault(a => a.Cliente.Cpf.Equals(cliente.Cpf));
+            Assinatura? assinatura = assinaturas.FirstOrDefault(a => a.Cliente.Cpf.Equals(clienteDto.Cpf));
 
             if (assinatura is not null) 
                 throw new AlreadyHasSubscriptionException("Esse cliente já possui assinatura.");
 
-            _uof.AssinaturaRepository.Criar(cliente);
+            _uof.AssinaturaRepository.Criar(clienteDto);
             _uof.Commit();
         }
 
