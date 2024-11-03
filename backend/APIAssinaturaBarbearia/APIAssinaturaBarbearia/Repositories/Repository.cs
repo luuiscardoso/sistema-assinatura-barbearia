@@ -25,14 +25,14 @@ namespace APIAssinaturaBarbearia.Repositories
             _context.Set<T>().Remove(entity);
         }
 
-        public T? Obter(Expression<Func<T, bool>> predicate, string propriedadeRelacionada)
+        public async Task<T?> Obter(Expression<Func<T, bool>> predicate, string propriedadeRelacionada)
         {
-            return _context.Set<T>().Include(propriedadeRelacionada).FirstOrDefault(predicate);
+            return await _context.Set<T>().Include(propriedadeRelacionada).FirstOrDefaultAsync(predicate);
         }
 
-        public IEnumerable<T> Todos(string propriedadeRelacionada)      
+        public async Task <IEnumerable<T>> Todos(string propriedadeRelacionada)      
         {
-            return _context.Set<T>().Include(propriedadeRelacionada).AsNoTracking().ToList();
+            return await _context.Set<T>().Include(propriedadeRelacionada).AsNoTracking().ToListAsync();
         }
     }
 }

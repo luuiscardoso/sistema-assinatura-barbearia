@@ -2,12 +2,13 @@
 using APIAssinaturaBarbearia.Exceptions;
 using APIAssinaturaBarbearia.Models;
 using APIAssinaturaBarbearia.Repositories.Interfaces;
+using APIAssinaturaBarbearia.Services.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace APIAssinaturaBarbearia.Services
 {
-    public class AssinaturaService
+    public class AssinaturaService : IAssinaturaService
     {
         private readonly IUnityOfWork _uof;
         private readonly IMapper _mapper;
@@ -17,9 +18,9 @@ namespace APIAssinaturaBarbearia.Services
             _uof = uof;
             _mapper = mapper;
         }
-        public Assinatura? BuscarAssinaturaEspecifica(int id)
+        public async Task<Assinatura?> BuscarAssinaturaEspecifica(int id)
         {
-            Assinatura? assinatura = _uof.AssinaturaRepository.Obter(a => a.AssinaturaId == id, "Cliente");
+            Assinatura? assinatura = await _uof.AssinaturaRepository.Obter(a => a.AssinaturaId == id, "Cliente");
 
             if (assinatura is null) 
                 throw new NotFoundException("Assinatura não encontrada.");
@@ -27,9 +28,9 @@ namespace APIAssinaturaBarbearia.Services
             return assinatura;
         }
 
-        public IEnumerable<Assinatura> BuscarAssinaturas()
+        public async Task<IEnumerable<Assinatura>> BuscarAssinaturas()
         {
-            IEnumerable<Assinatura> assinaturas = _uof.AssinaturaRepository.Todos("Cliente");
+            IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.Todos("Cliente");
 
             if (!assinaturas.Any())
                 throw new NotFoundException("Não existe nenhuma assinatura cadastrada.");
@@ -37,17 +38,17 @@ namespace APIAssinaturaBarbearia.Services
             return assinaturas;
         }
 
-        public void RegistrarNovaAssinatura(ClienteDTO clienteDto)
+        public async Task RegistrarNovaAssinatura(ClienteDTO clienteDto)
         {
-            IEnumerable<Assinatura> assinaturas = _uof.AssinaturaRepository.Todos("Cliente");
+            IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.Todos("Cliente");
 
-            Assinatura? assinatura = assinaturas.FirstOrDefault(a => a.Cliente.Cpf.Equals(clienteDto.Cpf));
+            Assinatura? assinatura =  assinaturas.FirstOrDefault(a => a.Cliente.Cpf.Equals(clienteDto.Cpf));
 
             if (assinatura is not null) 
                 throw new AlreadyHasSubscriptionException("Esse cliente já possui assinatura.");
 
             _uof.AssinaturaRepository.Criar(clienteDto);
-            _uof.Commit();
+            await _uof.Commit();
         }
 
         public void ProcessarAtualizacaoAssinatura(Assinatura assinaturaBd, AssinaturaUpdateDTO assinaturaDto)
@@ -64,15 +65,15 @@ namespace APIAssinaturaBarbearia.Services
             _uof.Commit();
         }
 
-        public void ExcluirAssinatura(int id)
+        public async Task ExcluirAssinatura(int id)
         {
-            Assinatura? assinatura = BuscarAssinaturaEspecifica(id);
+            Assinatura? assinatura = await BuscarAssinaturaEspecifica(id);
 
             if (assinatura is null) 
                 throw new NotFoundException("Assinatura não encontrada.");
 
             _uof.AssinaturaRepository.Excluir(assinatura);
-            _uof.Commit();
+            await _uof.Commit();
         }
     }
 }
