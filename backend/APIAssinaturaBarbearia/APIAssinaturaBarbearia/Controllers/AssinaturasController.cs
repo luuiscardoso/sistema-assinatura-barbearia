@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APIAssinaturaBarbearia.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class AssinaturasController : ControllerBase
