@@ -127,13 +127,17 @@ namespace APIAssinaturaBarbearia.Controllers
             Usuario? usuarioAutenticado = await _userManager.GetUserAsync(User);
             
             if(!usuarioAutenticado.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) 
-                || !User.IsInRole("Admin"))
+                && !User.IsInRole("Admin"))
             {
                 return BadRequest("Não é possivel revogar o acesso, verifique o e-mail ou seu perfil de acesso.");
             }
 
-            usuarioAutenticado.RefreshToken = null;
-            await _userManager.UpdateAsync(usuarioAutenticado);
+            Usuario? usuarioRevogar = await _userManager.FindByEmailAsync(email);
+            if (usuarioRevogar is null)
+                return BadRequest("Usuário inexistente.");
+
+            usuarioRevogar.RefreshToken = null;
+            await _userManager.UpdateAsync(usuarioRevogar);
             return NoContent();
         }
         #endregion
