@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APIAssinaturaBarbearia.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class AssinaturasController : ControllerBase
@@ -27,37 +27,37 @@ namespace APIAssinaturaBarbearia.Controllers
         }
         // /assinaturas/id
         [HttpGet("{id:int:min(1)}")]
-        public ActionResult<Assinatura> ObterAssinaturaPorId(int id)
+        public async Task<ActionResult<Assinatura>> ObterAssinaturaPorId(int id)
         {
-            Assinatura? assinatura = assinaturaService.BuscarAssinaturaEspecifica(id);
+            Assinatura? assinatura = await assinaturaService.BuscarAssinaturaEspecifica(id);
 
             return Ok(assinatura);
         }
 
         // /assinaturas
         [HttpGet]
-        public ActionResult<IEnumerable<Assinatura>> ObterTodasAssinaturas()
+        public async Task<ActionResult<IEnumerable<Assinatura>>> ObterTodasAssinaturas()
         {
-            IEnumerable<Assinatura> assinaturas = assinaturaService.BuscarAssinaturas();
+            IEnumerable<Assinatura> assinaturas = await assinaturaService.BuscarAssinaturas();
 
             return Ok(assinaturas);
         }
 
         [HttpPost("Criar")]
-        public ActionResult CriarAssinatura(Cliente cliente)
+        public async Task<ActionResult> CriarAssinatura(ClienteDTO clienteDto)
         {
-            assinaturaService.RegistrarNovaAssinatura(cliente);
+            await assinaturaService.RegistrarNovaAssinatura(clienteDto);
 
             return NoContent();
         }
 
 
         [HttpPatch("Alterar/{id:int:min(1)}")]
-        public ActionResult<Assinatura> AlterarAssinatura(int id, JsonPatchDocument<AssinaturaUpdateDTO> patchDoc)
+        public async Task<ActionResult<Assinatura>> AlterarAssinatura(int id, JsonPatchDocument<AssinaturaUpdateDTO> patchDoc)
         {
             if (patchDoc is null || patchDoc.Operations.Count == 0) return BadRequest("JSON Patch nulo ou vazio.");
 
-            Assinatura? assinaturaBd = assinaturaService.BuscarAssinaturaEspecifica(id);
+            Assinatura? assinaturaBd = await assinaturaService.BuscarAssinaturaEspecifica(id);
 
             AssinaturaUpdateDTO assinaturaDto = _mapper.Map<AssinaturaUpdateDTO>(assinaturaBd);
 
@@ -71,9 +71,9 @@ namespace APIAssinaturaBarbearia.Controllers
         }
 
         [HttpDelete("Deletar/{id:int:min(1)}")]
-        public ActionResult ExcluirAssinatura(int id)
+        public async Task<ActionResult> ExcluirAssinatura(int id)
         {
-            assinaturaService.ExcluirAssinatura(id);
+            await assinaturaService.ExcluirAssinatura(id);
             return NoContent();
         }
     }

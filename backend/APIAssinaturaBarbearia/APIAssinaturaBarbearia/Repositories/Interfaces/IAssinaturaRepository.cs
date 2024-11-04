@@ -1,9 +1,10 @@
-﻿using APIAssinaturaBarbearia.Models;
+﻿using APIAssinaturaBarbearia.DTO;
+using APIAssinaturaBarbearia.Models;
 
 namespace APIAssinaturaBarbearia.Repositories.Interfaces
 {
     public interface IAssinaturaRepository : IRepository<Assinatura>
     {
-        void Criar(Cliente cliente);
+        void Criar(ClienteDTO cliente);
     }
 }

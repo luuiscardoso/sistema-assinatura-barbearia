@@ -45,6 +45,7 @@ namespace APIAssinaturaBarbearia.Controllers
             {
                 new Claim(ClaimTypes.Email, usuario.Email),
                 new Claim(ClaimTypes.Name, usuario.UserName),
+                new Claim(ClaimTypes.NameIdentifier, usuario.Id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -79,7 +80,7 @@ namespace APIAssinaturaBarbearia.Controllers
 
             Usuario? usuario = await _userManager.FindByEmailAsync(email);
 
-            if (!usuario.RefreshToken.Equals(tokenDTO.RefreshToken) || DateTime.UtcNow >= usuario.RefreshTokenTempoExpiracao)
+            if (usuario.RefreshToken == null || !usuario.RefreshToken.Equals(tokenDTO.RefreshToken) || DateTime.UtcNow >= usuario.RefreshTokenTempoExpiracao)
             {
                 return BadRequest("Refresh Token inválido");
             }
@@ -116,6 +117,27 @@ namespace APIAssinaturaBarbearia.Controllers
                                   new { Erros = erros });
             }
 
+            return NoContent();
+        }
+
+        [Authorize]
+        [HttpPost("RevogarAcesso")]
+        public async Task<ActionResult> RevogarRefreshToken(string email)
+        {
+            Usuario? usuarioAutenticado = await _userManager.GetUserAsync(User);
+            
+            if(!usuarioAutenticado.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) 
+                && !User.IsInRole("Admin"))
+            {
+                return BadRequest("Não é possivel revogar o acesso, verifique o e-mail ou seu perfil de acesso.");
+            }
+
+            Usuario? usuarioRevogar = await _userManager.FindByEmailAsync(email);
+            if (usuarioRevogar is null)
+                return BadRequest("Usuário inexistente.");
+
+            usuarioRevogar.RefreshToken = null;
+            await _userManager.UpdateAsync(usuarioRevogar);
             return NoContent();
         }
         #endregion

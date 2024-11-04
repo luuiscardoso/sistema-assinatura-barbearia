@@ -7,7 +7,8 @@ namespace APIAssinaturaBarbearia.DTO.Mappings
     {
         public AssinaturaMappingProfile()
         {
-            CreateMap<Assinatura, AssinaturaUpdateDTO>().ReverseMap();  
+            CreateMap<Assinatura, AssinaturaUpdateDTO>().ReverseMap(); 
+            CreateMap<Cliente, ClienteDTO>().ReverseMap();
         }
     }
 }
