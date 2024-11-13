@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIAssinaturaBarbearia", "APIAssinaturaBarbearia\APIAssinaturaBarbearia.csproj", "{BC523C13-E733-47FB-8644-F44B6B91D489}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIAssinaturaBarbearia", "APIAssinaturaBarbearia\APIAssinaturaBarbearia.csproj", "{BC523C13-E733-47FB-8644-F44B6B91D489}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIAssinaturaBarbearia.Domain", "APIAssinaturaBarbearia.Domain\APIAssinaturaBarbearia.Domain.csproj", "{7F2EF1A7-2AF9-4AB5-92CE-00AE3B4DD210}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIAssinaturaBarbearia.Application", "APIAssinaturaBarbearia.Application\APIAssinaturaBarbearia.Application.csproj", "{D347CD82-BBBA-4C9D-BA5B-AED91DB911B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIAssinaturaBarbearia.Infrastructure", "APIAssinaturaBarbearia.Infrastructure\APIAssinaturaBarbearia.Infrastructure.csproj", "{EF921565-B66D-4A67-B38D-A6DBD8662BB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIAssinaturaBarbearia.CrossCutting", "APIAssinaturaBarbearia.CrossCutting\APIAssinaturaBarbearia.CrossCutting.csproj", "{AE11AF9E-0253-4089-8685-40DBBE8EAD25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +23,22 @@ Global
 		{BC523C13-E733-47FB-8644-F44B6B91D489}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC523C13-E733-47FB-8644-F44B6B91D489}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC523C13-E733-47FB-8644-F44B6B91D489}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F2EF1A7-2AF9-4AB5-92CE-00AE3B4DD210}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F2EF1A7-2AF9-4AB5-92CE-00AE3B4DD210}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F2EF1A7-2AF9-4AB5-92CE-00AE3B4DD210}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F2EF1A7-2AF9-4AB5-92CE-00AE3B4DD210}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D347CD82-BBBA-4C9D-BA5B-AED91DB911B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D347CD82-BBBA-4C9D-BA5B-AED91DB911B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D347CD82-BBBA-4C9D-BA5B-AED91DB911B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D347CD82-BBBA-4C9D-BA5B-AED91DB911B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF921565-B66D-4A67-B38D-A6DBD8662BB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF921565-B66D-4A67-B38D-A6DBD8662BB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF921565-B66D-4A67-B38D-A6DBD8662BB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF921565-B66D-4A67-B38D-A6DBD8662BB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE11AF9E-0253-4089-8685-40DBBE8EAD25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE11AF9E-0253-4089-8685-40DBBE8EAD25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE11AF9E-0253-4089-8685-40DBBE8EAD25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE11AF9E-0253-4089-8685-40DBBE8EAD25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
