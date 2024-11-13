@@ -9,10 +9,6 @@ namespace APIAssinaturaBarbearia.Services.Interfaces
 
         Task<IEnumerable<Assinatura>> BuscarAssinaturas();
 
-        Task RegistrarNovaAssinatura (ClienteDTO clienteDto);
-
-        void ProcessarAtualizacaoAssinatura(Assinatura assinaturaBd, AssinaturaUpdateDTO assinaturaDto);
-
         Task ExcluirAssinatura(int id);
     }
 }

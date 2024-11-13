@@ -4,6 +4,7 @@ using APIAssinaturaBarbearia.Models;
 using APIAssinaturaBarbearia.Repositories;
 using APIAssinaturaBarbearia.Repositories.Interfaces;
 using APIAssinaturaBarbearia.Services;
+using APIAssinaturaBarbearia.Services.Interfaces;
 using AutoMapper;
 using Azure;
 using Microsoft.AspNetCore.Authorization;
@@ -13,23 +14,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APIAssinaturaBarbearia.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("[controller]")]
     public class AssinaturasController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly AssinaturaService assinaturaService;
-        public AssinaturasController(AssinaturaService assinaturaService, IMapper mapper)
+        private readonly IAssinaturaService _assinaturaService;
+        private readonly IAssinaturaClienteHandlerService _assinaturaClienteHandlerService;
+        public AssinaturasController(IAssinaturaService assinaturaService, IMapper mapper, IAssinaturaClienteHandlerService assinaturaClienteHandlerService)
         {
-            this.assinaturaService = assinaturaService;
+            _assinaturaService = assinaturaService;
+            _assinaturaClienteHandlerService = assinaturaClienteHandlerService;
             _mapper = mapper;
         }
         // /assinaturas/id
         [HttpGet("{id:int:min(1)}")]
         public async Task<ActionResult<Assinatura>> ObterAssinaturaPorId(int id)
         {
-            Assinatura? assinatura = await assinaturaService.BuscarAssinaturaEspecifica(id);
+            Assinatura? assinatura = await _assinaturaService.BuscarAssinaturaEspecifica(id);
 
             return Ok(assinatura);
         }
@@ -38,7 +41,7 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Assinatura>>> ObterTodasAssinaturas()
         {
-            IEnumerable<Assinatura> assinaturas = await assinaturaService.BuscarAssinaturas();
+            IEnumerable<Assinatura> assinaturas = await _assinaturaService.BuscarAssinaturas();
 
             return Ok(assinaturas);
         }
@@ -46,7 +49,7 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpPost("Criar")]
         public async Task<ActionResult> CriarAssinatura(ClienteDTO clienteDto)
         {
-            await assinaturaService.RegistrarNovaAssinatura(clienteDto);
+            await _assinaturaClienteHandlerService.RegistrarNovaAssinatura(clienteDto);
 
             return NoContent();
         }
@@ -57,7 +60,7 @@ namespace APIAssinaturaBarbearia.Controllers
         {
             if (patchDoc is null || patchDoc.Operations.Count == 0) return BadRequest("JSON Patch nulo ou vazio.");
 
-            Assinatura? assinaturaBd = await assinaturaService.BuscarAssinaturaEspecifica(id);
+            Assinatura? assinaturaBd = await _assinaturaService.BuscarAssinaturaEspecifica(id);
 
             AssinaturaUpdateDTO assinaturaDto = _mapper.Map<AssinaturaUpdateDTO>(assinaturaBd);
 
@@ -65,7 +68,7 @@ namespace APIAssinaturaBarbearia.Controllers
 
             if (!ModelState.IsValid || !TryValidateModel(assinaturaDto)) return BadRequest(ModelState);
 
-            assinaturaService.ProcessarAtualizacaoAssinatura(assinaturaBd, assinaturaDto);
+            _assinaturaClienteHandlerService.ProcessarAtualizacaoAssinatura(assinaturaBd, assinaturaDto);
 
             return NoContent();
         }
@@ -73,7 +76,7 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpDelete("Deletar/{id:int:min(1)}")]
         public async Task<ActionResult> ExcluirAssinatura(int id)
         {
-            await assinaturaService.ExcluirAssinatura(id);
+            await _assinaturaService.ExcluirAssinatura(id);
             return NoContent();
         }
     }
