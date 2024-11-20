@@ -33,7 +33,6 @@ namespace APIAssinaturaBarbearia.Services
             return token;
         }
 
-        //gerar refresh token pra quando o token principal expirar a gente usar o refresh token pra renovar o token
         public string GerarRefreshToken()
         {
             byte[] arrayNumerosAleatorios = new byte[128];

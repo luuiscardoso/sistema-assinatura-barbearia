@@ -3,6 +3,7 @@ using APIAssinaturaBarbearia.DTO;
 using APIAssinaturaBarbearia.Models;
 using APIAssinaturaBarbearia.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace APIAssinaturaBarbearia.Repositories
 {
@@ -15,28 +16,19 @@ namespace APIAssinaturaBarbearia.Repositories
             _context = context;
         }
 
-        public void Criar(ClienteDTO clienteDto)
-        {
-            Assinatura assinatura = new Assinatura()
-            {
-                Inicio = DateTime.Now,
-                Fim = DateTime.Now.AddMonths(1),
-                Status = true
-            };
+        //public void Criar(Assinatura assinatura)
+        //{
+        //    _context.Assinaturas.Add(assinatura);
 
-            _context.Assinaturas.Add(assinatura);
+        //    //EntityEntry<Assinatura> r = _context.Assinaturas.Add(assinatura);
+        //    //r.Entity.AssinaturaId;
 
-            Cliente novoCliente = new Cliente()
-            {
-                AssinaturaId = assinatura.AssinaturaId,
-                Cpf = clienteDto.Cpf,
-                Nome = clienteDto.Nome
-            };
+            
 
-            assinatura.Cliente = novoCliente;
-            novoCliente.Assinatura = assinatura;
+        //    //assinatura.Cliente = novoCliente;
+        //    //novoCliente.Assinatura = assinatura;
 
-            _context.Clientes.Add(novoCliente);
-        }
+        //    //_context.Clientes.Add(novoCliente);
+        //}
     }
 }

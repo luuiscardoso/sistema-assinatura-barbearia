@@ -5,18 +5,17 @@ using APIAssinaturaBarbearia.Repositories.Interfaces;
 using APIAssinaturaBarbearia.Services.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace APIAssinaturaBarbearia.Services
 {
     public class AssinaturaService : IAssinaturaService
     {
         private readonly IUnityOfWork _uof;
-        private readonly IMapper _mapper;
 
-        public AssinaturaService(IUnityOfWork uof, IMapper mapper)
+        public AssinaturaService(IUnityOfWork uof)
         {
             _uof = uof;
-            _mapper = mapper;
         }
         public async Task<Assinatura?> BuscarAssinaturaEspecifica(int id)
         {
@@ -36,33 +35,6 @@ namespace APIAssinaturaBarbearia.Services
                 throw new NotFoundException("Não existe nenhuma assinatura cadastrada.");
 
             return assinaturas;
-        }
-
-        public async Task RegistrarNovaAssinatura(ClienteDTO clienteDto)
-        {
-            IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.Todos("Cliente");
-
-            Assinatura? assinatura =  assinaturas.FirstOrDefault(a => a.Cliente.Cpf.Equals(clienteDto.Cpf));
-
-            if (assinatura is not null) 
-                throw new AlreadyHasSubscriptionException("Esse cliente já possui assinatura.");
-
-            _uof.AssinaturaRepository.Criar(clienteDto);
-            await _uof.Commit();
-        }
-
-        public void ProcessarAtualizacaoAssinatura(Assinatura assinaturaBd, AssinaturaUpdateDTO assinaturaDto)
-        {
-            if (assinaturaDto.Cpf != null || assinaturaDto.Nome != null)
-            {
-                assinaturaBd.Cliente.Cpf = assinaturaDto.Cpf ?? assinaturaBd.Cliente.Cpf;
-                assinaturaBd.Cliente.Nome = assinaturaDto.Nome ?? assinaturaBd.Cliente.Nome;
-            }
-
-            Assinatura? assinatura = _mapper.Map(assinaturaDto, assinaturaBd);
-
-            _uof.AssinaturaRepository.Atualizar(assinatura);
-            _uof.Commit();
         }
 
         public async Task ExcluirAssinatura(int id)

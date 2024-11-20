@@ -2,6 +2,7 @@
 using APIAssinaturaBarbearia.Models;
 using APIAssinaturaBarbearia.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq.Expressions;
 
 namespace APIAssinaturaBarbearia.Repositories
@@ -19,6 +20,10 @@ namespace APIAssinaturaBarbearia.Repositories
             _context.Set<T>().Update(entity);
         }
 
+        public void Criar(T entity)
+        {
+            _context.Set<T>().Add(entity);
+        }
 
         public void Excluir(T entity)
         {
