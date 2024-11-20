@@ -6,6 +6,6 @@ namespace APIAssinaturaBarbearia.Services.Interfaces
 {
     public interface IClienteService
     {
-        EntityEntry<Cliente> RegistrarCliente(ClienteDTO clienteDto, Assinatura assinaturaCriada);
+        Cliente RegistrarCliente(ClienteDTO clienteDto, Assinatura assinaturaCriada);
     }
 }

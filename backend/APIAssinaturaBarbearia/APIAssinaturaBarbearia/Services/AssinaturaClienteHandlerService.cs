@@ -12,24 +12,26 @@ namespace APIAssinaturaBarbearia.Services
     {
         private readonly IUnityOfWork _uof;
         private readonly IClienteService _clienteService;
-        private readonly IMapper _mapper;
 
-        public AssinaturaClienteHandlerService(IUnityOfWork uof, IClienteService clienteService, IMapper mapper)
+        public AssinaturaClienteHandlerService(IUnityOfWork uof, IClienteService clienteService)
         {
             _uof = uof;
             _clienteService = clienteService;
-            _mapper = mapper;
         }
 
         public async Task RegistrarNovaAssinatura(ClienteDTO clienteDto)
         {
+            //busca todas assinaturas
             IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.Todos("Cliente");
 
+            //pega assinatura onde ja exista esse cliente
             Assinatura? assinaturaBd = assinaturas.FirstOrDefault(a => a.Cliente.Cpf.Equals(clienteDto.Cpf));
 
+            //se existir lanca excessao
             if (assinaturaBd is not null)
                 throw new AlreadyHasSubscriptionException("Esse cliente já possui assinatura.");
 
+            //se nao cria uma nova para persistir
             Assinatura assinatura = new Assinatura()
             {
                 Inicio = DateTime.Now,
@@ -37,12 +39,13 @@ namespace APIAssinaturaBarbearia.Services
                 Status = true
             };
 
+            //persiste
             _uof.AssinaturaRepository.Criar(assinatura); //add no contexto - "bd", possui id agora
 
-            EntityEntry<Cliente> cliente = _clienteService.RegistrarCliente(clienteDto, assinatura); // cliente add no bd com assinatura id
+            Cliente cliente = _clienteService.RegistrarCliente(clienteDto, assinatura); // cliente add no bd com assinatura id
 
-            assinatura.Cliente = cliente.Entity;
-            cliente.Entity.Assinatura = assinatura;
+            assinatura.Cliente = cliente;
+            cliente.Assinatura = assinatura;
 
             await _uof.Commit();
         }
@@ -55,9 +58,11 @@ namespace APIAssinaturaBarbearia.Services
                 assinaturaBd.Cliente.Nome = assinaturaDto.Nome ?? assinaturaBd.Cliente.Nome;
             }
 
-            Assinatura? assinatura = _mapper.Map(assinaturaDto, assinaturaBd);
+            //Assinatura? assinatura = mapper.Map(assinaturaDto, assinaturaBd);
+            assinaturaBd.Status = assinaturaDto.Status;
+            assinaturaBd.Fim = assinaturaDto.Fim;  
 
-            _uof.AssinaturaRepository.Atualizar(assinatura);
+            _uof.AssinaturaRepository.Atualizar(assinaturaBd);
             _uof.Commit();
         }
     }

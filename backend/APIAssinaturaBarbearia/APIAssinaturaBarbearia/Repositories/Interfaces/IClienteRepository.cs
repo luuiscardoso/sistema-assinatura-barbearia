@@ -5,6 +5,6 @@ namespace APIAssinaturaBarbearia.Repositories.Interfaces
 {
     public interface IClienteRepository
     {
-        EntityEntry<Cliente> Criar(Cliente cliente);
+        Cliente Criar(Cliente cliente);
     }
 }

@@ -15,7 +15,7 @@ namespace APIAssinaturaBarbearia.Services
             _uof = uof;
         }
 
-        public EntityEntry<Cliente> RegistrarCliente(ClienteDTO clienteDto, Assinatura assinaturaCriada)
+        public Cliente RegistrarCliente(ClienteDTO clienteDto, Assinatura assinaturaCriada)
         {
             Cliente novoCliente = new Cliente()
             {

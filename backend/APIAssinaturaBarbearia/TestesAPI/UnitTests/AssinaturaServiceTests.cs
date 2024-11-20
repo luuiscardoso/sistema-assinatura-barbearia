@@ -100,7 +100,7 @@ namespace TestesAPI.UnitTests
         }
 
         [Fact]
-        public async Task ExcluiAssinatura_InformandoIdAssinaturaExistente_RetornaListaSemAssinatura()
+        public async Task ExcluiAssinatura_InformandoIdAssinaturaExistente_DeveExcluirAssinatura()
         {
             //Arrange
             var mockUnityOfWork = new Mock<IUnityOfWork>();
@@ -122,6 +122,23 @@ namespace TestesAPI.UnitTests
             mockUnityOfWork.Verify(u => u.AssinaturaRepository.Excluir(It.Is<Assinatura>(a => a.AssinaturaId == 1)), 
                                                                                                       Times.Once());
             mockUnityOfWork.Verify(u => u.Commit(), Times.Once());
+        }
+
+        [Fact]
+        public async Task ExcluiAssinatura_InforfmandoAssinaturaInexistente_RetornaNotFoundException()
+        {
+            //Arrange
+            var id = 99;
+            var mockUnityOfWork = new Mock<IUnityOfWork>();
+            Assinatura assinaturaExcluir = null;
+
+            mockUnityOfWork.Setup(u => u.AssinaturaRepository.Obter(It.IsAny <Expression<Func<Assinatura, bool>>>(), It.IsAny<string>()))
+                           .ReturnsAsync(assinaturaExcluir);
+
+            var assinaturaService = new AssinaturaService(mockUnityOfWork.Object);
+
+            //Act & Assert
+            await Assert.ThrowsAsync<NotFoundException>(async () => await assinaturaService.ExcluirAssinatura(id));
         }
     }
 }
