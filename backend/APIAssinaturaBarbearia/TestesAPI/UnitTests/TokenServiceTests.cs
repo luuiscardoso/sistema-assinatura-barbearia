@@ -14,6 +14,28 @@ namespace TestesAPI.UnitTests
 {
     public class TokenServiceTests
     {
+        public JwtSecurityToken CriaTokenAxuiliarValidacao(string chave, string alg)
+        {
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+
+            string? chaveSecretaTeste = chave;
+
+            byte[] encodingChave = Encoding.UTF8.GetBytes(chaveSecretaTeste);
+
+            SigningCredentials assinatura = new SigningCredentials(new SymmetricSecurityKey(encodingChave),
+                                                                            alg);
+
+            SecurityTokenDescriptor descriptor = new SecurityTokenDescriptor()
+            {
+                Subject = null,
+                Expires = DateTime.UtcNow.AddSeconds(5),
+                SigningCredentials = assinatura
+            };
+
+            JwtSecurityToken token = handler.CreateJwtSecurityToken(descriptor);
+            return token;
+        }
+
         [Fact]
         public void GeraToken_InformandoListaClaimsValida_RetornaJwtSecutiryToken()
         {
@@ -28,7 +50,6 @@ namespace TestesAPI.UnitTests
             {
                 {"JWT:ChaveSecreta", "132002%12sau@p7LU123asoiaj~;.xci294"},
                 {"JWT:ValidadeTokenMinutos", "2"},
-                {"JWT:ValidadeRefreshTokenMinutos", "30"}
             };
 
             IConfiguration tokenConfig = new ConfigurationManager().AddInMemoryCollection(tokenConfigs).Build();
@@ -48,6 +69,164 @@ namespace TestesAPI.UnitTests
             Assert.InRange<TimeSpan>(tempoExpiracaoToken, entreInicio, entreFim); //expiracao esta no intervalo correto
             Assert.Contains<string>("unique_name", payloadClaimsTypes);
             Assert.Contains<string>("email", payloadClaimsTypes);
+        }
+
+        [Fact]
+        public void GeraToken_InformandoDadosConfigAusentes_RetornaException()
+        {
+            //Arrange
+            List<Claim> claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, "teste"),
+                new Claim(ClaimTypes.Email, "teste@gmail.com")
+            };
+
+            Dictionary<string, string> tokenConfigs = new Dictionary<string, string>()
+            {
+                {"JWT:ValidadeTokenMinutos", "2"},
+            };
+
+            IConfiguration tokenConfig = new ConfigurationManager().AddInMemoryCollection(tokenConfigs).Build();
+
+            var tokenService = new TokenService();
+
+            //Act & Assert
+            Assert.ThrowsAny<Exception>(() => tokenService.GerarToken(claims, tokenConfig));
+        }
+
+        [Fact]
+        public void GeraToken_InformandoDadosFormatoInvalido_RetornaException()
+        {
+            //Arrange
+            List<Claim> claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, "teste"),
+                new Claim(ClaimTypes.Email, "teste@gmail.com")
+            };
+
+            Dictionary<string, string> tokenConfigs = new Dictionary<string, string>()
+            {
+                {"JWT:ChaveSecreta", "132002%12sau@p7LU123asoiaj~;.xci294"},
+                {"JWT:ValidadeTokenMinutos", "s"},
+            };
+
+            IConfiguration tokenConfig = new ConfigurationManager().AddInMemoryCollection(tokenConfigs).Build();
+
+            var tokenService = new TokenService();
+
+            //Act & Assert
+            Assert.ThrowsAny<Exception>(() => tokenService.GerarToken(claims, tokenConfig));
+        }
+
+        [Fact]
+        public void GeraToken_InformandoListaClaimsVazia_RetornaTokenSemClaimsPersonalizadas()
+        {
+            //Arrange 
+            List<Claim> claims = new List<Claim>();
+
+            Dictionary<string, string> tokenConfigs = new Dictionary<string, string>()
+            {
+                {"JWT:ChaveSecreta", "132002%12sau@p7LU123asoiaj~;.xci294"},
+                {"JWT:ValidadeTokenMinutos", "2"},
+            };
+
+            IConfiguration tokenConfig = new ConfigurationManager().AddInMemoryCollection(tokenConfigs).Build();
+
+            var tokenService = new TokenService();
+
+            //Act
+            JwtSecurityToken result = tokenService.GerarToken(claims, tokenConfig);
+            IEnumerable<Claim> payloadClaims = result.Payload.Claims.ToList();
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.Equal(3, payloadClaims.Count());
+        }
+
+        [Fact]
+        public void ValidaToken_InformandoTokenValido_RetornaClaimsPrincipal()
+        {
+            //Arrange
+            JwtSecurityToken token = CriaTokenAxuiliarValidacao("@120*4hHKm412@120*4hHKm412@120*4hHKm412", "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256");
+            string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            Dictionary<string, string> tokenConfig = new Dictionary<string, string>()
+            {
+                {"JWT:ChaveSecreta","@120*4hHKm412@120*4hHKm412@120*4hHKm412"}
+            };
+
+            IConfiguration config = new ConfigurationManager().AddInMemoryCollection(tokenConfig).Build();
+
+            var tokenService = new TokenService();
+
+            //Act
+            ClaimsPrincipal result = tokenService.ValidaTokenObtemClaims(tokenString, config);
+
+            //Assert
+            Assert.NotNull(result);
+        }
+
+        [Fact]  
+        public void ValidaToken_InformandoTokenComAssinaturaInvalidaPorChaveSecretaDiferente_RetornaException()
+        {
+            //Arrange
+            JwtSecurityToken token = CriaTokenAxuiliarValidacao("@120*4hHKm412@120*4hHKm412@120*4hHKm412", "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256");
+            string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            Dictionary<string, string> tokenConfig = new Dictionary<string, string>()
+            {
+                {"JWT:ChaveSecreta","*&ghfjhg6454%a2%!2@1@@ghfjhg64543m410"}
+            };
+
+            IConfiguration config = new ConfigurationManager().AddInMemoryCollection(tokenConfig).Build();
+
+            var tokenService = new TokenService();
+
+            //Act & Assert
+            Assert.ThrowsAny<Exception>(() => tokenService.ValidaTokenObtemClaims(tokenString, config));
+        }
+
+        [Fact]
+        public void ValidaToken_InformandoTokenComAssinaturaInvalidaPorConteudoAlterado_RetornaException()
+        {
+            //Arrange
+            JwtSecurityToken token = CriaTokenAxuiliarValidacao("@120*4hHKm412@120*4hHKm412@120*4hHKm412", "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256");
+            token.Payload.AddClaim(new Claim("novoValor", "teste"));
+            string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            Dictionary<string, string> tokenConfig = new Dictionary<string, string>()
+            {
+                {"JWT:ChaveSecreta","*&ghfjhg6454%a2%!2@1@@ghfjhg64543m410"}
+            };
+
+            IConfiguration config = new ConfigurationManager().AddInMemoryCollection(tokenConfig).Build();
+
+            var tokenService = new TokenService();
+
+            //Act & Assert
+            Assert.ThrowsAny<Exception>(() => tokenService.ValidaTokenObtemClaims(tokenString, config));
+        }
+
+        [Fact]
+        public void ValidaToken_InformandoTokenComAlgoritmoDiferente_RetornaException()
+        {
+            //Arrange
+            JwtSecurityToken token = CriaTokenAxuiliarValidacao("@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412", 
+                                                                 "http://www.w3.org/2001/04/xmldsig-more#hmac-sha384");
+
+            string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            Dictionary<string, string> tokenConfig = new Dictionary<string, string>()
+            {
+                {"JWT:ChaveSecreta","@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412"}
+            };
+
+            IConfiguration config = new ConfigurationManager().AddInMemoryCollection(tokenConfig).Build();
+
+            var tokenService = new TokenService();
+
+            //Act & Assert
+            Assert.ThrowsAny<Exception>(() => tokenService.ValidaTokenObtemClaims(tokenString, config));
         }
     } 
 }
