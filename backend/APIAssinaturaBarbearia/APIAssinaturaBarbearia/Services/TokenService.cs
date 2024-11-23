@@ -64,7 +64,7 @@ namespace APIAssinaturaBarbearia.Services
 
             JwtSecurityToken? jwtToken = validatedToken as JwtSecurityToken;
 
-            if(jwtToken == null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            if(!jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new SecurityTokenException("Token inválido");
             }
