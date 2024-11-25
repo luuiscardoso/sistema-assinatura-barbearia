@@ -82,6 +82,7 @@ project.fragment.lock.json
 artifacts/
 **/appsettings.json
 **/appsettings.Development.json
+**/appsettings.Test.json
 
 
 # ASP.NET Scaffolding
