@@ -20,7 +20,7 @@ namespace TestesAPI.UnitTests
             //Arrange
             var mockUnityOfWork = new Mock<IUnityOfWork>();
            
-            ClienteDTO clienteDto = new ClienteDTO()
+            ClienteCadastroDTO clienteDto = new ClienteCadastroDTO()
             {
                 Cpf = "12345678912",
                 Nome = "teste"

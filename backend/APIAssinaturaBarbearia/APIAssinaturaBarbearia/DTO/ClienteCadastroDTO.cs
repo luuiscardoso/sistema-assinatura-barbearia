@@ -2,7 +2,7 @@
 
 namespace APIAssinaturaBarbearia.DTO
 {
-    public class ClienteDTO
+    public class ClienteCadastroDTO
     {
         [Required(ErrorMessage = "O CPF é obrigatório.")]
         [StringLength(11)]

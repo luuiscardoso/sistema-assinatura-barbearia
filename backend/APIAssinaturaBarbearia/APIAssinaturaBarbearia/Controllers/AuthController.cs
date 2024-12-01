@@ -63,16 +63,16 @@ namespace APIAssinaturaBarbearia.Controllers
             
             await _userManager.UpdateAsync(usuario);
 
-            return Ok(new
+            return Ok(new TokenResponseDTO
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 RefreshToken = refreshToken,
-                Exp = token.ValidTo
+                Expiracao = token.ValidTo
             });
         }
 
         [HttpPost("RenovarToken")]
-        public async Task<ActionResult> RenovarToken(TokenDTO tokenDTO)
+        public async Task<ActionResult> RenovarToken(TokenRequestDTO tokenDTO)
         {
             ClaimsPrincipal principal = _tokenService.ValidaTokenObtemClaims(tokenDTO.TokenPrincipal, _configuration);
 

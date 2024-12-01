@@ -228,5 +228,7 @@ namespace TestesAPI.UnitTests
             //Act & Assert
             Assert.ThrowsAny<Exception>(() => tokenService.ValidaTokenObtemClaims(tokenString, config));
         }
+
+        
     } 
 }

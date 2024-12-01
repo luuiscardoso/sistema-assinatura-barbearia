@@ -2,7 +2,7 @@
 
 namespace APIAssinaturaBarbearia.DTO
 {
-    public class TokenDTO
+    public class TokenRequestDTO
     {
         [Required(ErrorMessage = "Token obrigatório.")]
         public string TokenPrincipal { get; set; }
