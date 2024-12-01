@@ -14,9 +14,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APIAssinaturaBarbearia.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("[Controller]")]
     public class AssinaturasController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -47,16 +47,16 @@ namespace APIAssinaturaBarbearia.Controllers
         }
 
         [HttpPost("Criar")]
-        public async Task<ActionResult> CriarAssinatura(ClienteDTO clienteDto)
+        public async Task<ActionResult> CriarAssinatura(ClienteCadastroDTO clienteDto)
         {
-            await _assinaturaClienteHandlerService.RegistrarNovaAssinatura(clienteDto);
+            var assinaturaCriada =  await _assinaturaClienteHandlerService.RegistrarNovaAssinatura(clienteDto);
 
-            return NoContent();
+            return Created($"Assinaturas/{assinaturaCriada.AssinaturaId}", assinaturaCriada);
         }
 
 
         [HttpPatch("Alterar/{id:int:min(1)}")]
-        public async Task<ActionResult<Assinatura>> AlterarAssinatura(int id, JsonPatchDocument<AssinaturaUpdateDTO> patchDoc)
+        public async Task<ActionResult<Assinatura>> AlterarAssinatura(int id, [FromBody] JsonPatchDocument<AssinaturaUpdateDTO> patchDoc)
         {
             if (patchDoc is null || patchDoc.Operations.Count == 0) return BadRequest("JSON Patch nulo ou vazio.");
 
@@ -68,7 +68,7 @@ namespace APIAssinaturaBarbearia.Controllers
 
             if (!ModelState.IsValid || !TryValidateModel(assinaturaDto)) return BadRequest(ModelState);
 
-            _assinaturaClienteHandlerService.ProcessarAtualizacaoAssinatura(assinaturaBd, assinaturaDto);
+            await _assinaturaClienteHandlerService.ProcessarAtualizacaoAssinatura(assinaturaBd, assinaturaDto);
 
             return NoContent();
         }

@@ -19,7 +19,7 @@ namespace APIAssinaturaBarbearia.Services
             _clienteService = clienteService;
         }
 
-        public async Task RegistrarNovaAssinatura(ClienteDTO clienteDto)
+        public async Task<Assinatura> RegistrarNovaAssinatura(ClienteCadastroDTO clienteDto)
         {
             //busca todas assinaturas
             IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.Todos("Cliente");
@@ -48,9 +48,11 @@ namespace APIAssinaturaBarbearia.Services
             cliente.Assinatura = assinatura;
 
             await _uof.Commit();
+
+            return assinatura;
         }
 
-        public void ProcessarAtualizacaoAssinatura(Assinatura assinaturaBd, AssinaturaUpdateDTO assinaturaDto)
+        public async Task ProcessarAtualizacaoAssinatura(Assinatura assinaturaBd, AssinaturaUpdateDTO assinaturaDto)
         {
             if (assinaturaDto.Cpf != null || assinaturaDto.Nome != null)
             {
@@ -63,7 +65,7 @@ namespace APIAssinaturaBarbearia.Services
             assinaturaBd.Fim = assinaturaDto.Fim;  
 
             _uof.AssinaturaRepository.Atualizar(assinaturaBd);
-            _uof.Commit();
+            await _uof.Commit();
         }
     }
 }

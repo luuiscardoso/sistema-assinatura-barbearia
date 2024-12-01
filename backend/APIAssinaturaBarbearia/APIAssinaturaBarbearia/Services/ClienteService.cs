@@ -15,7 +15,7 @@ namespace APIAssinaturaBarbearia.Services
             _uof = uof;
         }
 
-        public Cliente RegistrarCliente(ClienteDTO clienteDto, Assinatura assinaturaCriada)
+        public Cliente RegistrarCliente(ClienteCadastroDTO clienteDto, Assinatura assinaturaCriada)
         {
             Cliente novoCliente = new Cliente()
             {

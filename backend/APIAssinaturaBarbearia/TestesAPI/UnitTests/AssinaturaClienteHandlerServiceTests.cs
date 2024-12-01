@@ -22,7 +22,7 @@ namespace TestesAPI.UnitTests
             //Arrange
             var mockUnityOfWork = new Mock<IUnityOfWork>();
             var mockClienteService = new Mock<IClienteService>();
-            ClienteDTO clienteDto = new ClienteDTO()
+            ClienteCadastroDTO clienteDto = new ClienteCadastroDTO()
             {
                 Cpf = "32365678900",
                 Nome = "teste"
@@ -44,7 +44,7 @@ namespace TestesAPI.UnitTests
                             .ReturnsAsync(assinaturas);
 
             mockUnityOfWork.Setup(u => u.AssinaturaRepository.Criar(It.IsAny<Assinatura>())).Verifiable();
-            mockClienteService.Setup(c => c.RegistrarCliente(It.IsAny<ClienteDTO>(), It.IsAny<Assinatura>()))
+            mockClienteService.Setup(c => c.RegistrarCliente(It.IsAny<ClienteCadastroDTO>(), It.IsAny<Assinatura>()))
                                .Returns(new Cliente());
 
             var assinaturaClienteHandler = new AssinaturaClienteHandlerService(mockUnityOfWork.Object, mockClienteService.Object);
@@ -55,7 +55,7 @@ namespace TestesAPI.UnitTests
             //Assert
             mockUnityOfWork.Verify(u => u.AssinaturaRepository.Criar(It.IsAny<Assinatura>()), Times.Once());
             mockClienteService.Verify(c =>
-                c.RegistrarCliente(It.Is<ClienteDTO>(dto => dto.Cpf == clienteDto.Cpf),
+                c.RegistrarCliente(It.Is<ClienteCadastroDTO>(dto => dto.Cpf == clienteDto.Cpf),
                                     It.IsAny<Assinatura>()), Times.Once()
             );
             mockUnityOfWork.Verify(u => u.Commit(), Times.Once());
@@ -67,7 +67,7 @@ namespace TestesAPI.UnitTests
             //Arrange
             var mockUnityOfWork = new Mock<IUnityOfWork>();
             var mockClienteService = new Mock<IClienteService>();
-            ClienteDTO clienteDto = new ClienteDTO()
+            ClienteCadastroDTO clienteDto = new ClienteCadastroDTO()
             {
                 Cpf = "12345678912",
                 Nome = "teste"
