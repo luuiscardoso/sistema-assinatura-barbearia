@@ -1,8 +1,4 @@
 ﻿using APIAssinaturaBarbearia.Controllers;
-using APIAssinaturaBarbearia.Data;
-using APIAssinaturaBarbearia.DTO;
-using APIAssinaturaBarbearia.Models;
-using APIAssinaturaBarbearia.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +11,11 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.AspNetCore.JsonPatch;
 using Newtonsoft.Json;
+using APIAssinaturaBarbearia.Infrastructure.Data;
+using APIAssinaturaBarbearia.Application.Interfaces;
+using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUsersUI;
+using APIAssinaturaBarbearia.Application.DTO;
+using APIAssinaturaBarbearia.Domain.Entities;
 
 namespace TestesAPI.IntegrationTests
 {
@@ -125,7 +126,7 @@ namespace TestesAPI.IntegrationTests
             patchDoc.Replace(x => x.Cpf, "12345543219");
             patchDoc.Replace(x => x.Nome, "Novo nome");
             patchDoc.Replace(x => x.Fim, DateTime.Now.AddMonths(2));
-            patchDoc.Replace(x => x.Status, false);
+            patchDoc.Replace(x => x.Status, true);
 
             var serializedContent = JsonConvert.SerializeObject(patchDoc);
             StringContent content = new StringContent(serializedContent, Encoding.UTF8, "application/json-patch+json");
@@ -169,8 +170,8 @@ namespace TestesAPI.IntegrationTests
         {
             List<Assinatura> assinaturas = new List<Assinatura>()
             {
-                new Assinatura(){Inicio = DateTime.Now, Fim = DateTime.Now.AddMonths(1), Status = true},
-                new Assinatura(){Inicio = DateTime.Now, Fim = DateTime.Now.AddMonths(1), Status = false}
+                new Assinatura(DateTime.Now, DateTime.Now.AddMonths(1), false),
+                new Assinatura(DateTime.Now, DateTime.Now.AddMonths(1), true)
             };
 
             List<Cliente> clientes = new List<Cliente>()

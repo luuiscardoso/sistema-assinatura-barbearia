@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Claims;
-using APIAssinaturaBarbearia.Services;
+using APIAssinaturaBarbearia.Application.Services;
 using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
@@ -48,16 +48,14 @@ namespace TestesAPI.UnitTests
 
             Dictionary<string, string> tokenConfigs = new Dictionary<string, string>()
             {
-                {"JWT:ChaveSecreta", "132002%12sau@p7LU123asoiaj~;.xci294"},
-                {"JWT:ValidadeTokenMinutos", "2"},
+                {"ChaveSecreta", "132002%12sau@p7LU123asoiaj~;.xci294" },
+                {"ValidadeTokenMinutos", "2" }
             };
-
-            IConfiguration tokenConfig = new ConfigurationManager().AddInMemoryCollection(tokenConfigs).Build();
 
             var tokenService = new TokenService();
 
             //Act
-            JwtSecurityToken result = tokenService.GerarToken(claims, tokenConfig);
+            JwtSecurityToken result = tokenService.GerarToken(claims, tokenConfigs);
             IEnumerable<string> payloadClaimsTypes = result.Payload.Claims.ToList().Select(c => c.Type);
             TimeSpan tempoExpiracaoToken = result.ValidTo - result.ValidFrom;
             TimeSpan entreInicio = new TimeSpan(0, 1, 55);
@@ -83,15 +81,13 @@ namespace TestesAPI.UnitTests
 
             Dictionary<string, string> tokenConfigs = new Dictionary<string, string>()
             {
-                {"JWT:ValidadeTokenMinutos", "2"},
+                {"ValidadeTokenMinutos", "2"},
             };
-
-            IConfiguration tokenConfig = new ConfigurationManager().AddInMemoryCollection(tokenConfigs).Build();
 
             var tokenService = new TokenService();
 
             //Act & Assert
-            Assert.ThrowsAny<Exception>(() => tokenService.GerarToken(claims, tokenConfig));
+            Assert.ThrowsAny<Exception>(() => tokenService.GerarToken(claims, tokenConfigs));
         }
 
         [Fact]
@@ -110,12 +106,10 @@ namespace TestesAPI.UnitTests
                 {"JWT:ValidadeTokenMinutos", "s"},
             };
 
-            IConfiguration tokenConfig = new ConfigurationManager().AddInMemoryCollection(tokenConfigs).Build();
-
             var tokenService = new TokenService();
 
             //Act & Assert
-            Assert.ThrowsAny<Exception>(() => tokenService.GerarToken(claims, tokenConfig));
+            Assert.ThrowsAny<Exception>(() => tokenService.GerarToken(claims, tokenConfigs));
         }
 
         [Fact]
@@ -126,16 +120,14 @@ namespace TestesAPI.UnitTests
 
             Dictionary<string, string> tokenConfigs = new Dictionary<string, string>()
             {
-                {"JWT:ChaveSecreta", "132002%12sau@p7LU123asoiaj~;.xci294"},
-                {"JWT:ValidadeTokenMinutos", "2"},
+                {"ChaveSecreta", "132002%12sau@p7LU123asoiaj~;.xci294"},
+                {"ValidadeTokenMinutos", "2"},
             };
-
-            IConfiguration tokenConfig = new ConfigurationManager().AddInMemoryCollection(tokenConfigs).Build();
 
             var tokenService = new TokenService();
 
             //Act
-            JwtSecurityToken result = tokenService.GerarToken(claims, tokenConfig);
+            JwtSecurityToken result = tokenService.GerarToken(claims, tokenConfigs);
             IEnumerable<Claim> payloadClaims = result.Payload.Claims.ToList();
 
             //Assert
@@ -150,17 +142,15 @@ namespace TestesAPI.UnitTests
             JwtSecurityToken token = CriaTokenAxuiliarValidacao("@120*4hHKm412@120*4hHKm412@120*4hHKm412", "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256");
             string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            Dictionary<string, string> tokenConfig = new Dictionary<string, string>()
+            Dictionary<string, string> tokenConfigs = new Dictionary<string, string>()
             {
-                {"JWT:ChaveSecreta","@120*4hHKm412@120*4hHKm412@120*4hHKm412"}
+                {"ChaveSecreta","@120*4hHKm412@120*4hHKm412@120*4hHKm412"}
             };
-
-            IConfiguration config = new ConfigurationManager().AddInMemoryCollection(tokenConfig).Build();
 
             var tokenService = new TokenService();
 
             //Act
-            ClaimsPrincipal result = tokenService.ValidaTokenObtemClaims(tokenString, config);
+            ClaimsPrincipal result = tokenService.ValidaTokenObtemClaims(tokenString, tokenConfigs);
 
             //Assert
             Assert.NotNull(result);
@@ -173,17 +163,15 @@ namespace TestesAPI.UnitTests
             JwtSecurityToken token = CriaTokenAxuiliarValidacao("@120*4hHKm412@120*4hHKm412@120*4hHKm412", "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256");
             string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            Dictionary<string, string> tokenConfig = new Dictionary<string, string>()
+            Dictionary<string, string> tokenConfigs = new Dictionary<string, string>()
             {
-                {"JWT:ChaveSecreta","*&ghfjhg6454%a2%!2@1@@ghfjhg64543m410"}
+                {"ChaveSecreta","*&ghfjhg6454%a2%!2@1@@ghfjhg64543m410"}
             };
-
-            IConfiguration config = new ConfigurationManager().AddInMemoryCollection(tokenConfig).Build();
 
             var tokenService = new TokenService();
 
             //Act & Assert
-            Assert.ThrowsAny<Exception>(() => tokenService.ValidaTokenObtemClaims(tokenString, config));
+            Assert.ThrowsAny<Exception>(() => tokenService.ValidaTokenObtemClaims(tokenString, tokenConfigs));
         }
 
         [Fact]
@@ -194,17 +182,15 @@ namespace TestesAPI.UnitTests
             token.Payload.AddClaim(new Claim("novoValor", "teste"));
             string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            Dictionary<string, string> tokenConfig = new Dictionary<string, string>()
+            Dictionary<string, string> tokenConfigs = new Dictionary<string, string>()
             {
-                {"JWT:ChaveSecreta","*&ghfjhg6454%a2%!2@1@@ghfjhg64543m410"}
+                {"ChaveSecreta","*&ghfjhg6454%a2%!2@1@@ghfjhg64543m410"}
             };
-
-            IConfiguration config = new ConfigurationManager().AddInMemoryCollection(tokenConfig).Build();
 
             var tokenService = new TokenService();
 
             //Act & Assert
-            Assert.ThrowsAny<Exception>(() => tokenService.ValidaTokenObtemClaims(tokenString, config));
+            Assert.ThrowsAny<Exception>(() => tokenService.ValidaTokenObtemClaims(tokenString, tokenConfigs));
         }
 
         [Fact]
@@ -216,17 +202,15 @@ namespace TestesAPI.UnitTests
 
             string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            Dictionary<string, string> tokenConfig = new Dictionary<string, string>()
+            Dictionary<string, string> tokenConfigs = new Dictionary<string, string>()
             {
-                {"JWT:ChaveSecreta","@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412"}
+                {"ChaveSecreta","@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412@120*4hHKm412"}
             };
-
-            IConfiguration config = new ConfigurationManager().AddInMemoryCollection(tokenConfig).Build();
 
             var tokenService = new TokenService();
 
             //Act & Assert
-            Assert.ThrowsAny<Exception>(() => tokenService.ValidaTokenObtemClaims(tokenString, config));
+            Assert.ThrowsAny<Exception>(() => tokenService.ValidaTokenObtemClaims(tokenString, tokenConfigs));
         }
 
         

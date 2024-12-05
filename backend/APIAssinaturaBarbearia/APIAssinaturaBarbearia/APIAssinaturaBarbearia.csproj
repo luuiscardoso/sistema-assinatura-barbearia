@@ -7,8 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Exceptions\**" />
+    <Content Remove="Exceptions\**" />
+    <EmbeddedResource Remove="Exceptions\**" />
+    <None Remove="Exceptions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.8" />
@@ -22,6 +28,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\APIAssinaturaBarbearia.Application\APIAssinaturaBarbearia.Application.csproj" />
+    <ProjectReference Include="..\APIAssinaturaBarbearia.CrossCutting\APIAssinaturaBarbearia.CrossCutting.csproj" />
+    <ProjectReference Include="..\APIAssinaturaBarbearia.Domain\APIAssinaturaBarbearia.Domain.csproj" />
+    <ProjectReference Include="..\APIAssinaturaBarbearia.Infrastructure\APIAssinaturaBarbearia.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

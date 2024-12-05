@@ -1,9 +1,9 @@
-﻿using APIAssinaturaBarbearia.DTO;
-using APIAssinaturaBarbearia.Exceptions;
-using APIAssinaturaBarbearia.Models;
-using APIAssinaturaBarbearia.Repositories.Interfaces;
-using APIAssinaturaBarbearia.Services;
-using APIAssinaturaBarbearia.Services.Interfaces;
+﻿using APIAssinaturaBarbearia.Application.DTO;
+using APIAssinaturaBarbearia.Application.Exceptions;
+using APIAssinaturaBarbearia.Application.Interfaces;
+using APIAssinaturaBarbearia.Application.Services;
+using APIAssinaturaBarbearia.Domain.Entities;
+using APIAssinaturaBarbearia.Domain.Interfaces;
 using AutoMapper;
 using Moq;
 using System;
@@ -91,7 +91,7 @@ namespace TestesAPI.UnitTests
             var assinaturaClienteHandler = new AssinaturaClienteHandlerService(mockUnityOfWork.Object, mockClienteService.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<AlreadyHasSubscriptionException>(async () => await assinaturaClienteHandler.RegistrarNovaAssinatura(clienteDto));
+            await Assert.ThrowsAsync<ApplicationAlreadyHasSubscriptionException>(async () => await assinaturaClienteHandler.RegistrarNovaAssinatura(clienteDto));
         }
 
         [Fact]
@@ -99,20 +99,15 @@ namespace TestesAPI.UnitTests
         {
             //Arrange
             var mockUnityOfWork = new Mock<IUnityOfWork>();
-            var clienteService = new Mock<IClienteService>();   
-        
-            Assinatura assinaturaAlterar = new Assinatura
-            {
-                AssinaturaId = 1,
-                Inicio = new DateTime(2024, 11, 19),
-                Fim = new DateTime(2024, 12, 19),
-                Status = true,
-                Cliente = new Cliente
-                {
-                    Cpf = "12345678900",
-                    Nome = "teste"
-                }
-            };
+            var clienteService = new Mock<IClienteService>();
+
+            Assinatura assinaturaAlterar = new Assinatura(new DateTime(2024, 11, 19), new DateTime(2024, 12, 19), true);
+            assinaturaAlterar.AssinaturaId = 1;
+            assinaturaAlterar.Cliente = new Cliente { Cpf = "12345678900", Nome = "teste" };
+
+
+
+
 
             AssinaturaUpdateDTO assinaturaDto = new AssinaturaUpdateDTO
             {
@@ -140,18 +135,9 @@ namespace TestesAPI.UnitTests
             var mockUnityOfWork = new Mock<IUnityOfWork>();
             var clienteService = new Mock<IClienteService>();
 
-            Assinatura assinaturaAlterar = new Assinatura
-            {
-                AssinaturaId = 1,
-                Inicio = new DateTime(2024, 11, 19),
-                Fim = new DateTime(2024, 12, 19),
-                Status = true,
-                Cliente = new Cliente
-                {
-                    Cpf = "12345678900",
-                    Nome = "teste"
-                }
-            };
+            Assinatura assinaturaAlterar = new Assinatura(new DateTime(2024, 11, 19), new DateTime(2024, 12, 19), true);
+            assinaturaAlterar.AssinaturaId = 1;
+            assinaturaAlterar.Cliente = new Cliente { Cpf = "12345678900", Nome = "teste" };
 
             AssinaturaUpdateDTO assinaturaDto = new AssinaturaUpdateDTO
             {
@@ -178,18 +164,9 @@ namespace TestesAPI.UnitTests
             var mockUnityOfWork = new Mock<IUnityOfWork>();
             var clienteService = new Mock<IClienteService>();
 
-            Assinatura assinaturaAlterar = new Assinatura
-            {
-                AssinaturaId = 1,
-                Inicio = new DateTime(2024, 11, 19),
-                Fim = new DateTime(2024, 12, 19),
-                Status = true,
-                Cliente = new Cliente
-                {
-                    Cpf = "12345678900",
-                    Nome = "teste"
-                }
-            };
+            Assinatura assinaturaAlterar = new Assinatura(new DateTime(2024, 11, 19), new DateTime(2024, 12, 19), true);
+            assinaturaAlterar.AssinaturaId = 1;
+            assinaturaAlterar.Cliente = new Cliente { Cpf = "12345678900", Nome = "teste" };
 
             AssinaturaUpdateDTO assinaturaDto = new AssinaturaUpdateDTO
             {

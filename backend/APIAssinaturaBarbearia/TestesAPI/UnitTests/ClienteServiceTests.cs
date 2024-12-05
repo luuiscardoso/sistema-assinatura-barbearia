@@ -1,14 +1,9 @@
-﻿using APIAssinaturaBarbearia.DTO;
-using APIAssinaturaBarbearia.Models;
-using APIAssinaturaBarbearia.Repositories.Interfaces;
-using APIAssinaturaBarbearia.Services;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using APIAssinaturaBarbearia.Application.DTO;
+using APIAssinaturaBarbearia.Application.Services;
+using APIAssinaturaBarbearia.Domain.Entities;
+using APIAssinaturaBarbearia.Domain.Interfaces;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace TestesAPI.UnitTests
 {

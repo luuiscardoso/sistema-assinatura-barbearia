@@ -6,4 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\APIAssinaturaBarbearia.Application\APIAssinaturaBarbearia.Application.csproj" />
+    <ProjectReference Include="..\APIAssinaturaBarbearia.Domain\APIAssinaturaBarbearia.Domain.csproj" />
+    <ProjectReference Include="..\APIAssinaturaBarbearia.Infrastructure\APIAssinaturaBarbearia.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

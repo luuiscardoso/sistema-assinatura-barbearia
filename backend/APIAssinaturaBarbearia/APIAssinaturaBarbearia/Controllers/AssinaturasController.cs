@@ -1,16 +1,10 @@
-﻿using APIAssinaturaBarbearia.Data;
-using APIAssinaturaBarbearia.DTO;
-using APIAssinaturaBarbearia.Models;
-using APIAssinaturaBarbearia.Repositories;
-using APIAssinaturaBarbearia.Repositories.Interfaces;
-using APIAssinaturaBarbearia.Services;
-using APIAssinaturaBarbearia.Services.Interfaces;
+﻿using APIAssinaturaBarbearia.Application.DTO;
 using AutoMapper;
-using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using APIAssinaturaBarbearia.Application.Interfaces;
+using APIAssinaturaBarbearia.Domain.Entities;
 
 namespace APIAssinaturaBarbearia.Controllers
 {
@@ -56,7 +50,7 @@ namespace APIAssinaturaBarbearia.Controllers
 
 
         [HttpPatch("Alterar/{id:int:min(1)}")]
-        public async Task<ActionResult<Assinatura>> AlterarAssinatura(int id, [FromBody] JsonPatchDocument<AssinaturaUpdateDTO> patchDoc)
+        public async Task<ActionResult<Assinatura>> AlterarAssinatura(int id, JsonPatchDocument<AssinaturaUpdateDTO> patchDoc)
         {
             if (patchDoc is null || patchDoc.Operations.Count == 0) return BadRequest("JSON Patch nulo ou vazio.");
 
