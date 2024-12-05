@@ -1,13 +1,12 @@
-﻿using APIAssinaturaBarbearia.DTO;
-using APIAssinaturaBarbearia.Models;
-using APIAssinaturaBarbearia.Services.Interfaces;
+﻿using APIAssinaturaBarbearia.Application.Interfaces;
+using APIAssinaturaBarbearia.Application.DTO;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUsersUI;
+
 
 namespace APIAssinaturaBarbearia.Controllers
 {
@@ -54,7 +53,14 @@ namespace APIAssinaturaBarbearia.Controllers
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            JwtSecurityToken token = _tokenService.GerarToken(claims, _configuration);
+            Dictionary<string, string> configuracoes = new Dictionary<string, string>()
+            {
+                {"ChaveSecreta", _configuration["JWT:ChaveSecreta"] },
+                {"ValidadeTokenMinutos", _configuration["JWT:ValidadeTokenMinutos"] },
+                {"ValidadeRefreshTokenMinutos", _configuration["JWT:ValidadeRefreshTokenMinutos"] }
+            };
+
+            JwtSecurityToken token = _tokenService.GerarToken(claims, configuracoes);
 
             string refreshToken = _tokenService.GerarRefreshToken();
 
@@ -74,7 +80,14 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpPost("RenovarToken")]
         public async Task<ActionResult> RenovarToken(TokenRequestDTO tokenDTO)
         {
-            ClaimsPrincipal principal = _tokenService.ValidaTokenObtemClaims(tokenDTO.TokenPrincipal, _configuration);
+            Dictionary<string, string> configuracoes = new Dictionary<string, string>()
+            {
+                {"ChaveSecreta", _configuration["ChaveSecreta"] },
+                {"ValidadeTokenMinutos", _configuration["ValidadeTokenMinutos"] },
+                {"ValidadeRefreshTokenMinutos", _configuration["ValidadeRefreshTokenMinutos"] }
+            };
+
+            ClaimsPrincipal principal = _tokenService.ValidaTokenObtemClaims(tokenDTO.TokenPrincipal, configuracoes);
 
             string email = principal.FindFirst(ClaimTypes.Email)!.Value;
 
@@ -85,7 +98,7 @@ namespace APIAssinaturaBarbearia.Controllers
                 return BadRequest("Refresh Token inválido");
             }
 
-            JwtSecurityToken token = _tokenService.GerarToken(principal.Claims.ToList(), _configuration);
+            JwtSecurityToken token = _tokenService.GerarToken(principal.Claims.ToList(), configuracoes);
 
             string refreshToken = _tokenService.GerarRefreshToken();
 

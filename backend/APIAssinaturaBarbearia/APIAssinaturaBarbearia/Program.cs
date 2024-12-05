@@ -1,22 +1,12 @@
-using APIAssinaturaBarbearia.Data;
-using APIAssinaturaBarbearia.DTO.Mappings;
 using APIAssinaturaBarbearia.Filtros;
-using APIAssinaturaBarbearia.Models;
-using APIAssinaturaBarbearia.Repositories;
-using APIAssinaturaBarbearia.Repositories.Interfaces;
-using APIAssinaturaBarbearia.Services;
-using APIAssinaturaBarbearia.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using APIAssinaturaBarbearia.Infrastructure.Data;
+using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUsersUI;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Serialization;
-using System.Text;
 using System.Text.Json.Serialization;
+using APIAssinaturaBarbearia.CrossCutting.IoC;
+using APIAssinaturaBarbearia.CrossCutting.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,44 +70,11 @@ builder.Services.AddDbContext<BdContext>(options => options.UseSqlServer(conexao
 #endregion
 
 #region Autenticação/JWT Configs
-string? key = builder.Configuration["JWT:ChaveSecreta"];
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.SaveToken = true;
-    options.RequireHttpsMetadata = false;
-    options.TokenValidationParameters = new TokenValidationParameters()
-    {
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero,
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!))
-    };
-});
-
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-});
+builder.Services.ConfigureAuthenticationAndAuthorization(builder.Configuration);
 #endregion
 
-
 #region Injecao de Dependencia
-builder.Services.AddAutoMapper(typeof(AssinaturaMappingProfile));
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IAssinaturaRepository, AssinaturaRepository>();
-builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IUnityOfWork, UnityOfWork>();
-builder.Services.AddScoped<IAssinaturaService, AssinaturaService>();
-builder.Services.AddScoped<IClienteService, ClienteService>();
-builder.Services.AddScoped<IAssinaturaClienteHandlerService, AssinaturaClienteHandlerService>();
+builder.Services.AddServices();
 #endregion
 
 var app = builder.Build();

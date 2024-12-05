@@ -1,8 +1,7 @@
-﻿using APIAssinaturaBarbearia.Exceptions;
-using APIAssinaturaBarbearia.Models;
-using APIAssinaturaBarbearia.Repositories.Interfaces;
-using APIAssinaturaBarbearia.Services;
-using APIAssinaturaBarbearia.Services.Interfaces;
+﻿using APIAssinaturaBarbearia.Application.Exceptions;
+using APIAssinaturaBarbearia.Application.Services;
+using APIAssinaturaBarbearia.Domain.Entities;
+using APIAssinaturaBarbearia.Domain.Interfaces;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -52,7 +51,7 @@ namespace TestesAPI.UnitTests
             var assinaturaService = new AssinaturaService(mockUnityOfWork.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(async () => await assinaturaService.BuscarAssinaturaEspecifica(id));
+            await Assert.ThrowsAsync<ApplicationNotFoundException>(async () => await assinaturaService.BuscarAssinaturaEspecifica(id));
             mockUnityOfWork.Verify(u => u.AssinaturaRepository.Obter(a => a.AssinaturaId == id, "Cliente"), Times.Once());
         }
 
@@ -95,7 +94,7 @@ namespace TestesAPI.UnitTests
             var assinaturaService = new AssinaturaService(mockUnityOfWork.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(async () => await assinaturaService.BuscarAssinaturas());
+            await Assert.ThrowsAsync<ApplicationNotFoundException>(async () => await assinaturaService.BuscarAssinaturas());
             mockUnityOfWork.Verify(u => u.AssinaturaRepository.Todos("Cliente"), Times.Once());
         }
 
@@ -138,7 +137,7 @@ namespace TestesAPI.UnitTests
             var assinaturaService = new AssinaturaService(mockUnityOfWork.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(async () => await assinaturaService.ExcluirAssinatura(id));
+            await Assert.ThrowsAsync<ApplicationNotFoundException>(async () => await assinaturaService.ExcluirAssinatura(id));
         }
     }
 }

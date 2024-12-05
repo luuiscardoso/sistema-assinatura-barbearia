@@ -1,5 +1,5 @@
-﻿using APIAssinaturaBarbearia.Data;
-using APIAssinaturaBarbearia.Filtros;
+﻿using APIAssinaturaBarbearia.Filtros;
+using APIAssinaturaBarbearia.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -46,17 +46,6 @@ namespace TestesAPI.IntegrationTests.CustomFactoryConfig
                     options.HttpsPort = 5001; // Define a porta HTTPS explicitamente
                 });
             });
-
-
-            //builder.Configure(app =>
-            //{
-            //    app.Use(async (context, next) =>
-            //    {
-            //        Console.WriteLine($"Request: {context.Request.Method} {context.Request.Path}");
-            //        Console.WriteLine($"Headers: {string.Join(", ", context.Request.Headers.Select(h => $"{h.Key}: {h.Value}"))}");
-            //        await next.Invoke();
-            //    });
-            //});
         }
     }
 }

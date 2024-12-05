@@ -1,4 +1,5 @@
-﻿using APIAssinaturaBarbearia.Exceptions;
+﻿using APIAssinaturaBarbearia.Application.Exceptions;
+using APIAssinaturaBarbearia.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -8,27 +9,43 @@ namespace APIAssinaturaBarbearia.Filtros
     {
         public void OnException(ExceptionContext contextRequest)
         {
-            if(contextRequest.Exception is NotFoundException)
+            switch (contextRequest.Exception)
             {
-                contextRequest.Result = new NotFoundObjectResult(contextRequest.Exception.Message)
-                {
-                    StatusCode = StatusCodes.Status404NotFound
-                };
-            } 
+                case ApplicationNotFoundException:
+                    contextRequest.Result = new NotFoundObjectResult(contextRequest.Exception.Message)
+                    {
+                        StatusCode = StatusCodes.Status404NotFound
+                    };
+                    break;
 
-            if(contextRequest.Exception is AlreadyHasSubscriptionException)
-            {
-                contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
-                {
-                    StatusCode = StatusCodes.Status400BadRequest
-                };
+                case ApplicationAlreadyHasSubscriptionException:
+                    contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest
+                    };
+                    break;
+
+                case DomainRenewalNotPaidException:
+                    contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest
+                    };
+                    break;
+
+                case DomainPeriodOfInvalidDatesException:
+                    contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest
+                    };
+                    break;
+
+                default:
+                    contextRequest.Result = new ObjectResult(contextRequest.Exception.Message)
+                    {
+                        StatusCode = StatusCodes.Status500InternalServerError,
+                    };
+                    break;
             }
-            
-     
-            contextRequest.Result = new ObjectResult(contextRequest.Exception.Message)
-            {
-                StatusCode = StatusCodes.Status500InternalServerError,
-            };
         }
     }
 }

@@ -9,22 +9,22 @@ namespace APIAssinaturaBarbearia.Filtros
         {
             app.UseExceptionHandler(appError =>
             {
-                appError.Run(async context =>
+                appError.Run(async requestContext =>
                 {
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    context.Response.ContentType = "application/json";
+                    requestContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    requestContext.Response.ContentType = "application/json";
 
-                    var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    var contextFeature = requestContext.Features.Get<IExceptionHandlerFeature>();
                     if (contextFeature != null)
                     {
                         var obj = new
                         {
-                            StatusCode = context.Response.StatusCode,
+                            StatusCode = requestContext.Response.StatusCode,
                             Message = contextFeature.Error.Message,
                             Trace = contextFeature.Error.StackTrace
                         };
 
-                        await context.Response.WriteAsync(obj.ToString());
+                        await requestContext.Response.WriteAsync(obj.ToString());
                     }
                 });
             });
