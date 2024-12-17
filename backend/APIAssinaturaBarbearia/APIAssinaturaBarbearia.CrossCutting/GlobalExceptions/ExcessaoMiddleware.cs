@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using System.Net;
 
-namespace APIAssinaturaBarbearia.Filtros
+namespace APIAssinaturaBarbearia.CrossCutting.GlobalExceptions
 {
-    public static class ExcessaoMidd
+    public static class ExcessaoMiddleware
     {
         public static void ConfigureExceptionHandler(this IApplicationBuilder app)
         {
@@ -19,8 +21,8 @@ namespace APIAssinaturaBarbearia.Filtros
                     {
                         var obj = new
                         {
-                            StatusCode = requestContext.Response.StatusCode,
-                            Message = contextFeature.Error.Message,
+                            requestContext.Response.StatusCode,
+                            contextFeature.Error.Message,
                             Trace = contextFeature.Error.StackTrace
                         };
 

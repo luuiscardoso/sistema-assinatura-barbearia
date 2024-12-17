@@ -24,8 +24,8 @@ namespace TestesAPI.IntegrationTests
         private readonly HttpClient _httpClient;
         private readonly BdContext _context;
         private readonly ITokenService _tokenService;
-        private readonly UserManager<Usuario> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUserService _userService;
+        private readonly IAdminService _adminService;
         private readonly IConfiguration _configuration;
 
         public AssinaturaControllerTests(CustomWebApplicationFactory<Program> factory)
@@ -37,10 +37,10 @@ namespace TestesAPI.IntegrationTests
             IServiceProvider serviceProvider = scope.ServiceProvider;
             _context = serviceProvider.GetRequiredService<BdContext>();
             _tokenService = serviceProvider.GetRequiredService<ITokenService>();
-            _userManager = serviceProvider.GetRequiredService<UserManager<Usuario>>();
-            _roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            _configuration = factory.Services.GetRequiredService<IConfiguration>();
+            _configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            _userService = serviceProvider.GetRequiredService<IUserService>();
+            _adminService = serviceProvider.GetRequiredService<IAdminService>();
         }
 
         public async Task<OkObjectResult> RealizarLoginAuxiliar()
@@ -50,7 +50,7 @@ namespace TestesAPI.IntegrationTests
                 Email = "teste@gmail.com",
                 Senha = "@Teste123"
             };
-            var authController = new AuthController(_tokenService, _userManager, _roleManager, _configuration);
+            var authController = new AuthController(_userService, _adminService);
             OkObjectResult? result = (await authController.Login(loginDTO)) as OkObjectResult;
 
             return result;
