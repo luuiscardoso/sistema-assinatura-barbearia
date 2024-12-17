@@ -43,7 +43,7 @@ namespace TestesAPI.IntegrationTests.CustomFactoryConfig
 
                 services.PostConfigure<HttpsRedirectionOptions>(options =>
                 {
-                    options.HttpsPort = 5001; // Define a porta HTTPS explicitamente
+                    options.HttpsPort = 5001; 
                 });
             });
         }

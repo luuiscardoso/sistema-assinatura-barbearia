@@ -7,6 +7,12 @@ using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using APIAssinaturaBarbearia.CrossCutting.IoC;
 using APIAssinaturaBarbearia.CrossCutting.Security;
+using APIAssinaturaBarbearia.CrossCutting.GlobalExceptions;
+using APIAssinaturaBarbearia.Application.Interfaces;
+using APIAssinaturaBarbearia.Application.Services;
+using APIAssinaturaBarbearia.Domain.Interfaces;
+using APIAssinaturaBarbearia.Infrastructure.Identity;
+using APIAssinaturaBarbearia.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,6 +81,16 @@ builder.Services.ConfigureAuthenticationAndAuthorization(builder.Configuration);
 
 #region Injecao de Dependencia
 builder.Services.AddServices();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IAssinaturaRepository, AssinaturaRepository>();
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUnityOfWork, UnityOfWork>();
+builder.Services.AddScoped<IAssinaturaService, AssinaturaService>();
+builder.Services.AddScoped<IClienteService, ClienteService>();
+builder.Services.AddScoped<IAssinaturaClienteHandlerService, AssinaturaClienteHandlerService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 #endregion
 
 var app = builder.Build();

@@ -14,118 +14,40 @@ namespace APIAssinaturaBarbearia.Controllers
     [Route("[Controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly ITokenService _tokenService;
-        private readonly UserManager<Usuario> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IConfiguration _configuration;
+        private readonly IUserService _userService;
+        private readonly IAdminService _adminService;
 
-        public AuthController(ITokenService tokenService, UserManager<Usuario> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AuthController(IUserService userService, IAdminService adminService)
         {
-            _tokenService = tokenService;
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _configuration = configuration;
+            _userService = userService;
+            _adminService = adminService;
         }
 
         #region AllUsers
         [HttpPost("Login")]
         public async Task<ActionResult> Login(LoginDTO loginDTO)
         {
-            Usuario? usuario = await _userManager.FindByEmailAsync(loginDTO.Email);
+            TokenResponseDTO tokenResponseDTO = await _userService.LoginAsync(loginDTO);
 
-            if (usuario == null) return BadRequest("Usuário não cadastrado, contate o administrador.");
-
-            if (!await _userManager.CheckPasswordAsync(usuario, loginDTO.Senha) || usuario.Email != loginDTO.Email)
-                return Unauthorized("Credenciais inválidas.");
-
-            var roles = await _userManager.GetRolesAsync(usuario);
-
-            List<Claim> claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.Email, usuario.Email),
-                new Claim(ClaimTypes.Name, usuario.UserName),
-                new Claim(ClaimTypes.NameIdentifier, usuario.Id),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            foreach(var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-
-            Dictionary<string, string> configuracoes = new Dictionary<string, string>()
-            {
-                {"ChaveSecreta", _configuration["JWT:ChaveSecreta"] },
-                {"ValidadeTokenMinutos", _configuration["JWT:ValidadeTokenMinutos"] },
-                {"ValidadeRefreshTokenMinutos", _configuration["JWT:ValidadeRefreshTokenMinutos"] }
-            };
-
-            JwtSecurityToken token = _tokenService.GerarToken(claims, configuracoes);
-
-            string refreshToken = _tokenService.GerarRefreshToken();
-
-            usuario.RefreshToken = refreshToken;
-            usuario.RefreshTokenTempoExpiracao = DateTime.UtcNow.AddMinutes(_configuration.GetSection("JWT").GetValue<int>("ValidadeRefreshTokenMinutos"));
-            
-            await _userManager.UpdateAsync(usuario);
-
-            return Ok(new TokenResponseDTO
-            {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                RefreshToken = refreshToken,
-                Expiracao = token.ValidTo
-            });
+            return Ok(tokenResponseDTO);
         }
 
         [HttpPost("RenovarToken")]
         public async Task<ActionResult> RenovarToken(TokenRequestDTO tokenDTO)
         {
-            Dictionary<string, string> configuracoes = new Dictionary<string, string>()
-            {
-                {"ChaveSecreta", _configuration["ChaveSecreta"] },
-                {"ValidadeTokenMinutos", _configuration["ValidadeTokenMinutos"] },
-                {"ValidadeRefreshTokenMinutos", _configuration["ValidadeRefreshTokenMinutos"] }
-            };
+            TokenResponseDTO tokenRequestDTO = await _userService.RenovarTokenAsync(tokenDTO);
 
-            ClaimsPrincipal principal = _tokenService.ValidaTokenObtemClaims(tokenDTO.TokenPrincipal, configuracoes);
-
-            string email = principal.FindFirst(ClaimTypes.Email)!.Value;
-
-            Usuario? usuario = await _userManager.FindByEmailAsync(email);
-
-            if (usuario.RefreshToken == null || !usuario.RefreshToken.Equals(tokenDTO.RefreshToken) || DateTime.UtcNow >= usuario.RefreshTokenTempoExpiracao)
-            {
-                return BadRequest("Refresh Token inválido");
-            }
-
-            JwtSecurityToken token = _tokenService.GerarToken(principal.Claims.ToList(), configuracoes);
-
-            string refreshToken = _tokenService.GerarRefreshToken();
-
-            usuario.RefreshToken = refreshToken;
-            usuario.RefreshTokenTempoExpiracao = DateTime.UtcNow.AddMinutes(_configuration.GetSection("JWT").GetValue<double>("ValidadeRefreshTokenMinutos"));
-            await _userManager.UpdateAsync(usuario);
-
-            return Ok(new
-            {
-                NovoToken = new JwtSecurityTokenHandler().WriteToken(token),
-                RefreshToken = refreshToken,
-                Exp = token.ValidTo
-            }); 
+            return Ok(tokenRequestDTO); 
         }
 
         [HttpPost("RedefinirSenha")]
         public async Task<ActionResult> RedefinirSenha(BarbeiroRedefinicaoSenhaDTO model)
         {
-            Usuario? barbeiro = await _userManager.FindByEmailAsync(model.Email);
+            IEnumerable<string> result = await _userService.RedefinirSenhaAsync(model);
 
-            if (barbeiro is null) return BadRequest("Usuário inexistente.");
-
-            var result = await _userManager.ChangePasswordAsync(barbeiro, model.SenhaAtual, model.NovaSenha);
-
-            if (!result.Succeeded)
+            if (result.Any())
             {
-                var erros = result.Errors.Select(erro => erro.Description);
+                var erros = result;
                 return StatusCode(StatusCodes.Status500InternalServerError,
                                   new { Erros = erros });
             }
@@ -137,20 +59,8 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpPost("RevogarAcesso")]
         public async Task<ActionResult> RevogarRefreshToken(string email)
         {
-            Usuario? usuarioAutenticado = await _userManager.GetUserAsync(User);
-            
-            if(!usuarioAutenticado.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) 
-                && !User.IsInRole("Admin"))
-            {
-                return BadRequest("Não é possivel revogar o acesso, verifique o e-mail ou seu perfil de acesso.");
-            }
+            await _userService.RevogarRefreshTokenAsync(email, User);
 
-            Usuario? usuarioRevogar = await _userManager.FindByEmailAsync(email);
-            if (usuarioRevogar is null)
-                return BadRequest("Usuário inexistente.");
-
-            usuarioRevogar.RefreshToken = null;
-            await _userManager.UpdateAsync(usuarioRevogar);
             return NoContent();
         }
         #endregion
@@ -159,25 +69,13 @@ namespace APIAssinaturaBarbearia.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         [HttpPost("Admin/RegistroUsuario")]
-        public async Task<ActionResult> AdminCriarUsuario(UsuarioCadastroDTO model)
+        public async Task<ActionResult> AdminCriarUsuario(UsuarioCadastroDTO usuarioCadastroDTO)
         {
-            Usuario? barbeiroExiste = await _userManager.FindByEmailAsync(model.Email);
+            IEnumerable<string> result = await _adminService.CriarUsuarioAsync(usuarioCadastroDTO);
 
-            if (barbeiroExiste != null) return BadRequest("Usuário já cadastrado");
-
-            Usuario barbeiro = new Usuario()
+            if (result.Any())
             {
-                Email = model.Email,
-                Cpf = model.Cpf,
-                UserName = model.Nome,
-                SecurityStamp = Guid.NewGuid().ToString()
-            };
-
-            var result = await _userManager.CreateAsync(barbeiro, model.Senha);
-
-            if (!result.Succeeded)
-            {
-                var erros = result.Errors.Select(erro => erro.Description);
+                var erros = result;
                 return StatusCode(StatusCodes.Status500InternalServerError,
                                   new { Erros = erros });
             }
@@ -190,16 +88,11 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpPost("Admin/CriarPerfil")]
         public async Task<ActionResult> CriarPerfil(string perfil) 
         {
-            bool perfilExiste = await _roleManager.RoleExistsAsync(perfil);
+            IEnumerable<string> result = await _adminService.CriarPerfilAsync(perfil);
 
-            if (perfilExiste) return BadRequest("Perfil existente.");
-            
-            IdentityRole novaRole = new IdentityRole(perfil);
-            var result = await _roleManager.CreateAsync(novaRole);
-
-            if (!result.Succeeded)
+            if (result.Any())
             {
-                var erros = result.Errors.Select(erro => erro.Description);
+                var erros = result;
                 return StatusCode(StatusCodes.Status500InternalServerError,
                                   new { Erros = erros });
             }
@@ -212,15 +105,11 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpDelete("Admin/ExcluirPerfil")]
         public async Task<ActionResult> DeletarPerfil(string perfil)
         {
-            IdentityRole? roleBd = await _roleManager.FindByNameAsync(perfil);
+            var result = await _adminService.DeletarPerfilAsync(perfil);
 
-            if (roleBd is null) return BadRequest("Perfil inexistente.");
-
-            var result = await _roleManager.DeleteAsync(roleBd);
-
-            if (!result.Succeeded)
+            if (result.Any())
             {
-                var erros = result.Errors.Select(erro => erro.Description);
+                var erros = result;
                 return StatusCode(StatusCodes.Status500InternalServerError,
                                   new { Erros = erros });
             }
@@ -233,15 +122,11 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpPost("Admin/AssociarPerfilUsuario")]
         public async Task<ActionResult> AssociarPerfilUsuario(string email, string role)
         {
-            Usuario? usuario = await _userManager.FindByEmailAsync(email);
+            var result = await _adminService.AssociarPerfilUsuarioAsync(email, role);
 
-            if (usuario is null) return BadRequest("Usuário inexistente.");
-
-            var result = await _userManager.AddToRoleAsync(usuario, role);
-
-            if (!result.Succeeded)
+            if (result.Any())
             {
-                var erros = result.Errors.Select(erro => erro.Description);
+                var erros = result;
                 return StatusCode(StatusCodes.Status500InternalServerError,
                                   new { Erros = erros });
             }
@@ -254,15 +139,11 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpDelete("Admin/ExcluirUsuario")]
         public async Task<ActionResult> DeletarUsuario(string email)
         {
-            Usuario? usuario = await _userManager.FindByEmailAsync(email);
+            IEnumerable<string> result = await _adminService.DeletarUsuarioAsync(email);
 
-            if (usuario is null) return BadRequest("Usuário inexistente.");
-
-            var result = await _userManager.DeleteAsync(usuario);
-
-            if (!result.Succeeded)
+            if (result.Any())
             {
-                var erros = result.Errors.Select(erro => erro.Description);
+                var erros = result;
                 return StatusCode(StatusCodes.Status500InternalServerError,
                                   new { Erros = erros });
             }

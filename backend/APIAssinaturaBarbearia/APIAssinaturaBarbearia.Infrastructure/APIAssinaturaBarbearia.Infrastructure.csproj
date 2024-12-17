@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
       <PrivateAssets>all</PrivateAssets>
@@ -20,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\APIAssinaturaBarbearia.Application\APIAssinaturaBarbearia.Application.csproj" />
     <ProjectReference Include="..\APIAssinaturaBarbearia.Domain\APIAssinaturaBarbearia.Domain.csproj" />
   </ItemGroup>
 

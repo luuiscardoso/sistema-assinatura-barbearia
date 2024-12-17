@@ -25,6 +25,48 @@ namespace APIAssinaturaBarbearia.Filtros
                     };
                     break;
 
+                case ApplicationUserNotRegisteredException:
+                    contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest
+                    };
+                    break;
+
+                case ApplicationInvalidCredentialsException:
+                    contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest
+                    };
+                    break;
+
+                case ApplicationInvalidRefreshTokenException:
+                    contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest
+                    };
+                    break;
+
+                case ApplicationRevocationAccessException:
+                    contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest
+                    };
+                    break;
+
+                case ApplicationUserAlreadyRegisteredException:
+                    contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest
+                    };
+                    break;
+
+                case ApplicationRoleAlreadyExistsException:
+                    contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest
+                    };
+                    break;
+
                 case DomainRenewalNotPaidException:
                     contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
                     {
