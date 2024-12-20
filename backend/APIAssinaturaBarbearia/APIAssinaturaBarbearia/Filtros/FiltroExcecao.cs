@@ -67,6 +67,13 @@ namespace APIAssinaturaBarbearia.Filtros
                     };
                     break;
 
+                case ApplicationSearchPeriodOfInvalidDatesException:
+                    contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest
+                    };
+                    break;
+
                 case DomainRenewalNotPaidException:
                     contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
                     {

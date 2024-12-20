@@ -8,7 +8,7 @@ using APIAssinaturaBarbearia.Domain.Entities;
 
 namespace APIAssinaturaBarbearia.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("[Controller]")]
     public class AssinaturasController : ControllerBase
@@ -22,7 +22,7 @@ namespace APIAssinaturaBarbearia.Controllers
             _assinaturaClienteHandlerService = assinaturaClienteHandlerService;
             _mapper = mapper;
         }
-        // /assinaturas/id
+
         [HttpGet("{id:int:min(1)}")]
         public async Task<ActionResult<Assinatura>> ObterAssinaturaPorId(int id)
         {
@@ -31,13 +31,44 @@ namespace APIAssinaturaBarbearia.Controllers
             return Ok(assinatura);
         }
 
-        // /assinaturas
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Assinatura>>> ObterTodasAssinaturas()
         {
             IEnumerable<Assinatura> assinaturas = await _assinaturaService.BuscarAssinaturas();
 
             return Ok(assinaturas);
+        }
+
+        [HttpGet("ObterPorCpfCliente")]
+        public async Task<ActionResult<Assinatura>> ObterAssinaturaPorCpfCliente(string cpf)
+        {
+            Assinatura assinatura = await _assinaturaService.BuscarAssinaturaPorCpfCliente(cpf);
+
+            return Ok(assinatura);
+        }
+
+        [HttpGet("ObterPorNomeCliente")]
+        public async Task<ActionResult<Assinatura>> ObterAssinaturaPorNomeCliente(string nome)
+        {
+            IEnumerable<Assinatura> assinaturas = await _assinaturaService.BuscarAssinaturaPorNomeCliente(nome);
+
+            return Ok(assinaturas);
+        }
+
+        [HttpGet("ObterPorStatus")]
+        public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturasPorStatus(bool status)
+        {
+            IEnumerable<Assinatura> assinatura = await _assinaturaService.BuscarAssinaturaPorStatus(status);
+
+            return Ok(assinatura);
+        }
+
+        [HttpGet("ObterPorData")]
+        public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturasPorData(DateTime dataInicio, DateTime dataFinal)
+        {
+            IEnumerable<Assinatura> assinatura = await _assinaturaService.BuscarAssinaturasPorData(dataInicio, dataFinal);
+
+            return Ok(assinatura);
         }
 
         [HttpPost("Criar")]
