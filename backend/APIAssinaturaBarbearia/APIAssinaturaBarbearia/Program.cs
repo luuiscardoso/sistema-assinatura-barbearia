@@ -93,6 +93,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 #endregion
 
+builder.Services.ConfigureRateLimiter();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -104,6 +106,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
