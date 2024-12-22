@@ -1,4 +1,5 @@
-﻿using APIAssinaturaBarbearia.Domain.Entities;
+﻿using APIAssinaturaBarbearia.Application.DTO;
+using APIAssinaturaBarbearia.Domain.Entities;
 
 namespace APIAssinaturaBarbearia.Application.Interfaces
 {
@@ -6,16 +7,16 @@ namespace APIAssinaturaBarbearia.Application.Interfaces
     {
         Task<Assinatura> BuscarAssinaturaEspecifica(int id);
 
-        Task<IEnumerable<Assinatura>> BuscarAssinaturas();
+        Task<PaginacaoDTO<Assinatura>> BuscarAssinaturas(int numeroPagina);
 
         Task ExcluirAssinatura(int id);
 
         Task<Assinatura> BuscarAssinaturaPorCpfCliente(string cpf);
 
-        Task<IEnumerable<Assinatura>> BuscarAssinaturaPorNomeCliente(string nome);
+        Task<PaginacaoDTO<Assinatura>> BuscarAssinaturaPorNomeCliente(string nome, int numeroPagina);
 
-        Task<IEnumerable<Assinatura>> BuscarAssinaturaPorStatus(bool status);
+        Task<PaginacaoDTO<Assinatura>> BuscarAssinaturaPorStatus(bool status, int numeroPagina);
 
-        Task<IEnumerable<Assinatura>> BuscarAssinaturasPorData(DateTime dataInicio, DateTime dataFinal);
+        Task<PaginacaoDTO<Assinatura>> BuscarAssinaturasPorData(DateTime dataInicio, DateTime dataFinal, int numeroPagina);
     }
 }
