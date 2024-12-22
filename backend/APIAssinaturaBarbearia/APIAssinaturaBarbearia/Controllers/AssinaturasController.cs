@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using APIAssinaturaBarbearia.Application.Interfaces;
 using APIAssinaturaBarbearia.Domain.Entities;
+using Newtonsoft.Json;
 
 namespace APIAssinaturaBarbearia.Controllers
 {
@@ -32,11 +33,13 @@ namespace APIAssinaturaBarbearia.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Assinatura>>> ObterTodasAssinaturas()
+        public async Task<ActionResult<IEnumerable<Assinatura>>> ObterTodasAssinaturas(int numeroPagina)
         {
-            IEnumerable<Assinatura> assinaturas = await _assinaturaService.BuscarAssinaturas();
+            PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturas(numeroPagina);
 
-            return Ok(assinaturas);
+            HeaderAppend(paginacaoAssinatura);
+
+            return Ok(paginacaoAssinatura.Registros);
         }
 
         [HttpGet("ObterPorCpfCliente")]
@@ -48,33 +51,39 @@ namespace APIAssinaturaBarbearia.Controllers
         }
 
         [HttpGet("ObterPorNomeCliente")]
-        public async Task<ActionResult<Assinatura>> ObterAssinaturaPorNomeCliente(string nome)
+        public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturaPorNomeCliente(string nome, int numeroPagina)
         {
-            IEnumerable<Assinatura> assinaturas = await _assinaturaService.BuscarAssinaturaPorNomeCliente(nome);
+            PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturaPorNomeCliente(nome, numeroPagina);
 
-            return Ok(assinaturas);
+            HeaderAppend(paginacaoAssinatura);
+
+            return Ok(paginacaoAssinatura.Registros);
         }
 
         [HttpGet("ObterPorStatus")]
-        public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturasPorStatus(bool status)
+        public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturasPorStatus(bool status, int numeroPagina)
         {
-            IEnumerable<Assinatura> assinatura = await _assinaturaService.BuscarAssinaturaPorStatus(status);
+            PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturaPorStatus(status, numeroPagina);
 
-            return Ok(assinatura);
+            HeaderAppend(paginacaoAssinatura);
+
+            return Ok(paginacaoAssinatura.Registros);
         }
 
         [HttpGet("ObterPorData")]
-        public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturasPorData(DateTime dataInicio, DateTime dataFinal)
+        public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturasPorData(DateTime dataInicio, DateTime dataFinal, int numeroPagina)
         {
-            IEnumerable<Assinatura> assinatura = await _assinaturaService.BuscarAssinaturasPorData(dataInicio, dataFinal);
+            PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturasPorData(dataInicio, dataFinal, numeroPagina);
 
-            return Ok(assinatura);
+            HeaderAppend(paginacaoAssinatura);
+
+            return Ok(paginacaoAssinatura.Registros);
         }
 
         [HttpPost("Criar")]
         public async Task<ActionResult> CriarAssinatura(ClienteCadastroDTO clienteDto)
         {
-            var assinaturaCriada =  await _assinaturaClienteHandlerService.RegistrarNovaAssinatura(clienteDto);
+            var assinaturaCriada = await _assinaturaClienteHandlerService.RegistrarNovaAssinatura(clienteDto);
 
             return Created($"Assinaturas/{assinaturaCriada.AssinaturaId}", assinaturaCriada);
         }
@@ -103,6 +112,19 @@ namespace APIAssinaturaBarbearia.Controllers
         {
             await _assinaturaService.ExcluirAssinatura(id);
             return NoContent();
+        }
+
+        private void HeaderAppend(PaginacaoDTO<Assinatura> paginacao)
+        {
+            Response.Headers.Append("Paginacao", JsonConvert.SerializeObject(new
+            {
+                TotalPaginas = paginacao.TotalPaginas,
+                PaginaAtual = paginacao.PaginaAtual,
+                TemProxima = paginacao.TemProxima,
+                TemAnterior = paginacao.TemAnterior,
+                QtdRegistrosAtual = paginacao.Registros.Count(),
+                TotalRegistros = paginacao.TotalRegistros
+            }));
         }
     }
 }
