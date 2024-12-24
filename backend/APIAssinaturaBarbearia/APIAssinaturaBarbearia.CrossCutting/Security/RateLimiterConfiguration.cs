@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace APIAssinaturaBarbearia.CrossCutting.Security
 {
     static public class RateLimiterConfiguration
     {
-        static public void ConfigureRateLimiter(this IServiceCollection services)
+        static public void ConfigureRateLimiter(this IServiceCollection services, IConfiguration config)
         {
             services.AddRateLimiter(options =>
             {
@@ -26,9 +27,9 @@ namespace APIAssinaturaBarbearia.CrossCutting.Security
                                         factory: partition => new FixedWindowRateLimiterOptions
                                         {
                                             AutoReplenishment = true,
-                                            PermitLimit = 1,
-                                            QueueLimit = 0,
-                                            Window = TimeSpan.FromSeconds(3)
+                                            PermitLimit = config.GetSection("RateLimiter").GetValue<int>("LimiteRequisicoes"),
+                                            QueueLimit = config.GetSection("RateLimiter").GetValue<int>("LimiteFila"),
+                                            Window = TimeSpan.FromSeconds(config.GetSection("RateLimiter").GetValue<double>("Janela"))
                                         }));
             });
         }

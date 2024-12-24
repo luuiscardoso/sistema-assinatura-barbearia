@@ -93,7 +93,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 #endregion
 
-builder.Services.ConfigureRateLimiter();
+builder.Services.ConfigureRateLimiter(builder.Configuration);
 
 var app = builder.Build();
 

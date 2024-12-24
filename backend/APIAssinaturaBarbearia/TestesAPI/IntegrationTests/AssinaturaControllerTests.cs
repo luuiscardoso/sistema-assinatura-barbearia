@@ -16,6 +16,7 @@ using APIAssinaturaBarbearia.Application.Interfaces;
 using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUsersUI;
 using APIAssinaturaBarbearia.Application.DTO;
 using APIAssinaturaBarbearia.Domain.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace TestesAPI.IntegrationTests
 {
@@ -64,7 +65,7 @@ namespace TestesAPI.IntegrationTests
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenObject.Token);
 
             //Act
-            HttpResponseMessage response = await _httpClient.GetAsync("/Assinaturas");
+            HttpResponseMessage response = await _httpClient.GetAsync("/Assinaturas?numeroPagina=1");
 
             //Assert 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -106,6 +107,7 @@ namespace TestesAPI.IntegrationTests
             HttpResponseMessage response = await _httpClient.PostAsync("Assinaturas/Criar", content);
             var assinaturaCriada = _context.Assinaturas.Include(a => a.Cliente).Single(a => a.Cliente.Cpf == clienteDTO.Cpf);
             var clienteCriado = assinaturaCriada.Cliente;
+
 
             //Arrange
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);

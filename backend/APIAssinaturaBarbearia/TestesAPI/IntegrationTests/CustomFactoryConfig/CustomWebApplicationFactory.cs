@@ -1,21 +1,15 @@
-﻿using APIAssinaturaBarbearia.Filtros;
-using APIAssinaturaBarbearia.Infrastructure.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using APIAssinaturaBarbearia.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+using System.Security.Claims;
+using System.Threading.RateLimiting;
 
 namespace TestesAPI.IntegrationTests.CustomFactoryConfig
 {
@@ -27,7 +21,7 @@ namespace TestesAPI.IntegrationTests.CustomFactoryConfig
             {
                 config.AddJsonFile("appsettings.Test.json");
             });
-;
+   
             builder.ConfigureServices(services =>
             {
                 var contextDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<BdContext>));
@@ -39,6 +33,24 @@ namespace TestesAPI.IntegrationTests.CustomFactoryConfig
                 }
 
                 var configuration = sp.GetRequiredService<IConfiguration>();
+
+                services.AddRateLimiter(options =>
+                {
+                    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+                    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(_ =>
+                                        RateLimitPartition.GetFixedWindowLimiter(
+                                                           partitionKey: Guid.NewGuid().ToString(),
+                                        factory: partition => new FixedWindowRateLimiterOptions
+                                        {
+                                            AutoReplenishment = true,
+                                            PermitLimit = configuration.GetSection("RateLimiter").GetValue<int>("LimiteRequisicoes"),
+                                            QueueLimit = configuration.GetSection("RateLimiter").GetValue<int>("LimiteFila"),
+                                            Window = TimeSpan.FromSeconds(configuration.GetSection("RateLimiter").GetValue<double>("Janela"))
+                                        }));
+                });
+
+                
                 services.AddDbContext<BdContext>(op => op.UseSqlServer(configuration.GetConnectionString("TestConnection")));
 
                 services.PostConfigure<HttpsRedirectionOptions>(options =>

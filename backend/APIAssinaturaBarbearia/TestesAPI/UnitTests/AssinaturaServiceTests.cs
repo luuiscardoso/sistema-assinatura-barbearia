@@ -59,6 +59,7 @@ namespace TestesAPI.UnitTests
         public async Task BuscarAssinaturas_RetornaColecaoAssinaturas()
         {
             //Arrange
+            int numeroPagina = 1;
             var mockUnityOfWork = new Mock<IUnityOfWork>();
             IEnumerable<Assinatura> assinaturas = new List<Assinatura>()
             {
@@ -73,10 +74,10 @@ namespace TestesAPI.UnitTests
             var assinaturaService = new AssinaturaService(mockUnityOfWork.Object);
 
             //Act
-            var result = await assinaturaService.BuscarAssinaturas();
+            var result = await assinaturaService.BuscarAssinaturas(numeroPagina);
 
             //Assert
-            Assert.NotEmpty(result);
+            Assert.NotEmpty(result.Registros);
             mockUnityOfWork.Verify(u => u.AssinaturaRepository.Todos("Cliente"), Times.Once());
         }
 
@@ -84,6 +85,7 @@ namespace TestesAPI.UnitTests
         public async Task BuscarAssinaturas_RetornaNotFoundException()
         {
             //Arrange
+            int numeroPagina = 1;
             var mockUnityOfWork = new Mock<IUnityOfWork>();
             IEnumerable<Assinatura> assinaturas = Enumerable.Empty<Assinatura>();
 
@@ -94,7 +96,7 @@ namespace TestesAPI.UnitTests
             var assinaturaService = new AssinaturaService(mockUnityOfWork.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<ApplicationNotFoundException>(async () => await assinaturaService.BuscarAssinaturas());
+            await Assert.ThrowsAsync<ApplicationNotFoundException>(async () => await assinaturaService.BuscarAssinaturas(numeroPagina));
             mockUnityOfWork.Verify(u => u.AssinaturaRepository.Todos("Cliente"), Times.Once());
         }
 
