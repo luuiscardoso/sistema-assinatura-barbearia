@@ -5,9 +5,9 @@ namespace APIAssinaturaBarbearia.Application.DTO
     public class TokenRequestDTO
     {
         [Required(ErrorMessage = "Token obrigatório.")]
-        public string TokenPrincipal { get; set; }
+        public string? TokenPrincipal { get; set; }
 
         [Required(ErrorMessage = "Refresh Token obrigatório.")]
-        public string RefreshToken { get; set; }
+        public string? RefreshToken { get; set; }
     }
 }

@@ -23,6 +23,11 @@ namespace APIAssinaturaBarbearia.Controllers
             _adminService = adminService;
         }
 
+        /// <summary>
+        /// Realiza o login de um usuário e retorna o access token e refresh token.
+        /// </summary>
+        /// <param name="loginDTO">Email e senha do usuário</param>
+        /// <returns>Access token e refresh token.</returns>
         #region AllUsers
         [HttpPost("Login")]
         public async Task<ActionResult> Login(LoginDTO loginDTO)
@@ -32,14 +37,23 @@ namespace APIAssinaturaBarbearia.Controllers
             return Ok(tokenResponseDTO);
         }
 
+        /// <summary>
+        /// Renova o access token com o refresh token do usuário.
+        /// </summary>
+        /// <param name="tokenDTO">Access token e refresh token.</param>
+        /// <returns>Novos access token e refresh token.</returns>
         [HttpPost("RenovarToken")]
         public async Task<ActionResult> RenovarToken(TokenRequestDTO tokenDTO)
         {
-            TokenResponseDTO tokenRequestDTO = await _userService.RenovarTokenAsync(tokenDTO);
+            TokenResponseDTO tokenResponseDTO = await _userService.RenovarTokenAsync(tokenDTO);
 
-            return Ok(tokenRequestDTO); 
+            return Ok(tokenResponseDTO); 
         }
 
+        /// <summary>
+        /// Muda a senha do usuário.
+        /// </summary>
+        /// <param name="model">Email, senha atual e nova senha do usuário.</param>
         [HttpPost("RedefinirSenha")]
         public async Task<ActionResult> RedefinirSenha(BarbeiroRedefinicaoSenhaDTO model)
         {
@@ -55,6 +69,12 @@ namespace APIAssinaturaBarbearia.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Faz o logout de um usuário.
+        /// </summary>
+        /// <param name="email">E-mail do usuário.</param>
+        /// <remarks>A desconexão de um usuário do sistema pode ser feita 
+        /// por um terceiro desde que o mesmo tenha papel de administrador.</remarks>
         [Authorize]
         [HttpPost("RevogarAcesso")]
         public async Task<ActionResult> RevogarRefreshToken(string email)
@@ -63,10 +83,54 @@ namespace APIAssinaturaBarbearia.Controllers
 
             return NoContent();
         }
+
+        /// <summary>
+        /// Gera token reset de senha e envia para o email do usuário.
+        /// </summary>
+        /// <param name="email">E-mail do usuário</param>
+        /// <returns></returns>
+        [HttpPost("ResetSenha/GerarToken")]
+        public async Task<ActionResult<string>> GerarTokenResetSenha(string email)
+        {
+            await _userService.GerarTokenResetSenhaAsync(email);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Valida token antes de redirecionar para a página de reset de senha.
+        /// </summary>
+        /// <param name="token">Token recebido no email para reset de senha.</param>
+        /// <returns></returns>
+        [HttpPost("ResetSenha/ValidarToken")]
+        public async Task<ActionResult<string>> VerificaTokenResetSenha(string token)
+        {
+            await _userService.VerificaTokenResetSenhaAsync(token);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Reseta a senha do usuário.
+        /// </summary>
+        /// <param name="resetSenhaDTO">Token, e-mail e senha.</param>
+        /// <returns></returns>
+        [HttpPost("ResetSenha/ResetarSenha")]
+        public async Task<ActionResult<string>> ResetarSenha(ResetSenhaDTO resetSenhaDTO)
+        {
+            await _userService.ResetSenhaAsync(resetSenhaDTO);
+
+            return Ok();
+        }
         #endregion
 
         #region AdminsOnly
 
+        /// <summary>
+        /// Registra um usuário.
+        /// </summary>
+        /// <param name="usuarioCadastroDTO">Email, senha, cpf e nome.</param>
+        /// <returns></returns>
         [Authorize(Policy = "AdminOnly")]
         [HttpPost("Admin/RegistroUsuario")]
         public async Task<ActionResult> AdminCriarUsuario(UsuarioCadastroDTO usuarioCadastroDTO)
@@ -83,7 +147,10 @@ namespace APIAssinaturaBarbearia.Controllers
             return NoContent();
         }
 
-        
+        /// <summary>
+        /// Cria um novo perfil no sistema.
+        /// </summary>
+        /// <param name="perfil">Novo perfil.</param>
         [Authorize(Policy = "AdminOnly")]
         [HttpPost("Admin/CriarPerfil")]
         public async Task<ActionResult> CriarPerfil(string perfil) 
@@ -100,7 +167,10 @@ namespace APIAssinaturaBarbearia.Controllers
             return NoContent();
         }
 
-        
+        /// <summary>
+        /// Deleta um perfil existente do sistema.
+        /// </summary>
+        /// <param name="perfil">Perfil a ser excluido.</param>
         [Authorize(Policy = "AdminOnly")]
         [HttpDelete("Admin/ExcluirPerfil")]
         public async Task<ActionResult> DeletarPerfil(string perfil)
@@ -117,7 +187,11 @@ namespace APIAssinaturaBarbearia.Controllers
             return NoContent();
         }
 
-
+        /// <summary>
+        /// Atribui a um usuário um perfil existente.
+        /// </summary>
+        /// <param name="email">Email do usuário.</param>
+        /// <param name="role">Perfil a ser associado.</param>
         [Authorize(Policy = "AdminOnly")]
         [HttpPost("Admin/AssociarPerfilUsuario")]
         public async Task<ActionResult> AssociarPerfilUsuario(string email, string role)
@@ -134,7 +208,10 @@ namespace APIAssinaturaBarbearia.Controllers
             return NoContent();
         }
 
-        
+        /// <summary>
+        /// Deleta um usuário do sistema.
+        /// </summary>
+        /// <param name="email">Email do usuário a ser deletado.</param>
         [Authorize(Policy = "AdminOnly")]
         [HttpDelete("Admin/ExcluirUsuario")]
         public async Task<ActionResult> DeletarUsuario(string email)

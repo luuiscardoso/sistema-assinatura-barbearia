@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace APIAssinaturaBarbearia.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("[Controller]")]
     public class AssinaturasController : ControllerBase
@@ -24,6 +24,11 @@ namespace APIAssinaturaBarbearia.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Obtém uma assinatura por ID.
+        /// </summary>
+        /// <param name="id">ID da assinatura desejada.</param>
+        /// <returns>Objeto assinatura</returns>
         [HttpGet("{id:int:min(1)}")]
         public async Task<ActionResult<Assinatura>> ObterAssinaturaPorId(int id)
         {
@@ -32,6 +37,12 @@ namespace APIAssinaturaBarbearia.Controllers
             return Ok(assinatura);
         }
 
+        /// <summary>
+        /// Obtém uma lista paginada de assinaturas.
+        /// </summary>
+        /// <param name="numeroPagina">Número da página que se deseja visualizar</param>
+        /// <remarks>O número de registros retornados por pagina é 5.</remarks>
+        /// <returns>Conjunto de assinaturas</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Assinatura>>> ObterTodasAssinaturas(int numeroPagina)
         {
@@ -42,6 +53,11 @@ namespace APIAssinaturaBarbearia.Controllers
             return Ok(paginacaoAssinatura.Registros);
         }
 
+        /// <summary>
+        /// Obtém uma assinatura filtrada por CPF do cliente.
+        /// </summary>
+        /// <param name="cpf">CPF do cliente.</param>
+        /// <returns>Objeto assinatura.</returns>
         [HttpGet("ObterPorCpfCliente")]
         public async Task<ActionResult<Assinatura>> ObterAssinaturaPorCpfCliente(string cpf)
         {
@@ -50,6 +66,14 @@ namespace APIAssinaturaBarbearia.Controllers
             return Ok(assinatura);
         }
 
+        /// <summary>
+        /// Obtém uma lista paginada de assinaturas filtradas por um nome de cliente.
+        /// </summary>
+        /// <param name="nome">Um nome de cliente</param>
+        /// <param name="numeroPagina">Número da página que se deseja visualizar</param>
+        /// <remarks>A lista de assinaturas pode também retornar várias 
+        /// assinaturas que contem parte do nome especificado.</remarks>
+        /// <returns>Conjunto de assinaturas</returns>
         [HttpGet("ObterPorNomeCliente")]
         public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturaPorNomeCliente(string nome, int numeroPagina)
         {
@@ -60,6 +84,12 @@ namespace APIAssinaturaBarbearia.Controllers
             return Ok(paginacaoAssinatura.Registros);
         }
 
+        /// <summary>
+        /// Obtém uma lista paginada de assinaturas filtradas pelo status de ativação.
+        /// </summary>
+        /// <param name="status">Status de ativação.</param>
+        /// <param name="numeroPagina">Número da página que se deseja visualizar</param>
+        /// <returns>Conjunto de assinaturas</returns>
         [HttpGet("ObterPorStatus")]
         public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturasPorStatus(bool status, int numeroPagina)
         {
@@ -70,6 +100,13 @@ namespace APIAssinaturaBarbearia.Controllers
             return Ok(paginacaoAssinatura.Registros);
         }
 
+        /// <summary>
+        /// Obtém uma lista paginada de assinaturas que a data de inicio esteja dentro do intervalo de datas especificado.
+        /// </summary>
+        /// <param name="dataInicio">Data inicial do intervalo</param>
+        /// <param name="dataFinal">Data final do intervalo</param>
+        /// <param name="numeroPagina">Número da página que se deseja visualizar</param>
+        /// <returns>Conjunto de assinaturas</returns>
         [HttpGet("ObterPorData")]
         public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturasPorData(DateTime dataInicio, DateTime dataFinal, int numeroPagina)
         {
@@ -80,6 +117,20 @@ namespace APIAssinaturaBarbearia.Controllers
             return Ok(paginacaoAssinatura.Registros);
         }
 
+        /// <summary>
+        /// Cria uma assinatura baseada no nome e CPF de um cliente.
+        /// </summary>
+        /// <param name="clienteDto">Dados do cliente</param>
+        /// <remarks>
+        /// Exemplo de request: 
+        /// 
+        ///     POST Assinaturas/Criar
+        ///     {
+        ///         "cpf": "94399629822",
+        ///         "nome": "string"
+        ///     }
+        /// </remarks>
+        /// <returns>Assinatura criada</returns>
         [HttpPost("Criar")]
         public async Task<ActionResult> CriarAssinatura(ClienteCadastroDTO clienteDto)
         {
@@ -88,7 +139,25 @@ namespace APIAssinaturaBarbearia.Controllers
             return Created($"Assinaturas/{assinaturaCriada.AssinaturaId}", assinaturaCriada);
         }
 
-
+        /// <summary>
+        /// Altera parcialmente uma assinatura baseada em operações PATCH.
+        /// </summary>
+        /// <param name="id">ID da assinatura a ser alterada</param>
+        /// <param name="patchDoc">JSON Patch com as operações para cada propriedade</param>
+        ///  /// <remarks>
+        /// Exemplo de request: 
+        /// 
+        ///     PATCH Assinaturas/Alterar/1
+        ///     [
+        ///         {
+        ///             "path": "/status",
+        ///             "op": "replace",
+        ///             "value": false
+        ///         }
+        ///     ]
+        ///     
+        /// Propriedades passiveis de alteração: status,nome do cliente, cpf do cliente e data de expiração. 
+        /// </remarks>
         [HttpPatch("Alterar/{id:int:min(1)}")]
         public async Task<ActionResult<Assinatura>> AlterarAssinatura(int id, JsonPatchDocument<AssinaturaUpdateDTO> patchDoc)
         {
@@ -107,6 +176,10 @@ namespace APIAssinaturaBarbearia.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Exclui uma assinatura.
+        /// </summary>
+        /// <param name="id">ID da assinatura a ser exluida.</param>
         [HttpDelete("Deletar/{id:int:min(1)}")]
         public async Task<ActionResult> ExcluirAssinatura(int id)
         {

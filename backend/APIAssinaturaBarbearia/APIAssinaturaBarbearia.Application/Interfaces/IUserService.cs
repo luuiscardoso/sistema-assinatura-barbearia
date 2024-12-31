@@ -14,5 +14,10 @@ namespace APIAssinaturaBarbearia.Application.Interfaces
         Task<TokenResponseDTO> RenovarTokenAsync(TokenRequestDTO tokenDTO);
         Task<IEnumerable<string>> RedefinirSenhaAsync(BarbeiroRedefinicaoSenhaDTO model);
         Task RevogarRefreshTokenAsync(string email, ClaimsPrincipal httpContextUser);
+
+        Task GerarTokenResetSenhaAsync(string email);
+        Task VerificaTokenResetSenhaAsync(string token);
+
+        Task ResetSenhaAsync(ResetSenhaDTO resetSenhaDTO);
     }
 }

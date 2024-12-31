@@ -10,6 +10,14 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUserTokens;
+using APIAssinaturaBarbearia.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
+using APIAssinaturaBarbearia.Domain.Interfaces;
+using APIAssinaturaBarbearia.Infrastructure.Repositories.Interfaces;
+using APIAssinaturaBarbearia.Infrastructure.Repositories;
+
 
 namespace APIAssinaturaBarbearia.Infrastructure.Identity
 {
@@ -18,12 +26,17 @@ namespace APIAssinaturaBarbearia.Infrastructure.Identity
         private readonly UserManager<Usuario> _userManager;
         private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
+        private readonly IResetSenhaTokenRepository<CustomIdentityUserTokens> _resetSenhaTokenRepository;
 
-        public UserService(ITokenService tokenService, UserManager<Usuario> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public UserService(ITokenService tokenService, UserManager<Usuario> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, BdContext context, 
+                            IEmailService emailService, IResetSenhaTokenRepository<CustomIdentityUserTokens> resetSenhaTokenRepository)
         {
             _tokenService = tokenService;
             _userManager = userManager;
             _configuration = configuration;
+            _emailService = emailService;
+            _resetSenhaTokenRepository = resetSenhaTokenRepository;
         }
         public async Task<TokenResponseDTO> LoginAsync(LoginDTO loginDTO)
         {
@@ -146,6 +159,63 @@ namespace APIAssinaturaBarbearia.Infrastructure.Identity
 
             usuarioRevogar.RefreshToken = null;
             await _userManager.UpdateAsync(usuarioRevogar);
+        }
+
+        public async Task GerarTokenResetSenhaAsync(string email)
+        {
+            Usuario? usuario = await _userManager.FindByEmailAsync(email);
+            if (usuario is null)
+                throw new ApplicationUserNotRegisteredException("Usuário não encontrado.");
+
+            string token = await _userManager.GeneratePasswordResetTokenAsync(usuario);
+
+            CustomIdentityUserTokens customIdentityUserTokens = new CustomIdentityUserTokens()
+            {
+                UserId = usuario.Id,
+                LoginProvider = "Default",
+                Name = "ResetPasswordToken",
+                Value = token,
+                Criacao = DateTime.UtcNow,
+                Expiracao = DateTime.UtcNow.AddMinutes(5)
+            };
+
+            _resetSenhaTokenRepository.Criar(customIdentityUserTokens);
+
+            await _emailService.EnviarEmailAsync(email, "Solicitação de recuperação de senha", "Esse é um e-mail provisório, enquanto não desenvolvemos a página " +
+                $"de redirecionamento, informe o valor do seu token de reset de senha: {token}");
+        }
+
+        public async Task VerificaTokenResetSenhaAsync(string token)
+        {
+            _ = await ValidaTokenAsync(token);
+        }
+
+        public async Task ResetSenhaAsync(ResetSenhaDTO resetSenhaDTO)
+        {
+            CustomIdentityUserTokens tokenBd = await ValidaTokenAsync(resetSenhaDTO.Token);
+
+            var usuario = await _userManager.FindByIdAsync(tokenBd.UserId);
+
+            if (usuario.Email != resetSenhaDTO.EmailConfirmacao)
+                throw new ApplicationNonMatchException("E-mail não correponde.");
+
+            await _userManager.ResetPasswordAsync(usuario, resetSenhaDTO.Token, resetSenhaDTO.NovaSenha);
+
+            _resetSenhaTokenRepository.Excluir(tokenBd);
+        }
+
+        private async Task<CustomIdentityUserTokens> ValidaTokenAsync(string token)
+        {
+            CustomIdentityUserTokens tokenBd = await _resetSenhaTokenRepository.ObterAsync(t => t.Value == token)
+                                    ?? throw new ApplicationInvalidTokenException("Token inválido.");
+
+            if (tokenBd.Expiracao <= DateTime.UtcNow)
+            {
+                _resetSenhaTokenRepository.Excluir(tokenBd);
+                throw new ApplicationInvalidTokenException("Token expirado.");
+            }
+
+            return tokenBd;
         }
     }
 }

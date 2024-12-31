@@ -6,10 +6,10 @@ namespace APIAssinaturaBarbearia.Application.DTO
     {
         [Required(ErrorMessage = "E-mail obrigatório.")]
         [EmailAddress(ErrorMessage = "Insira um e-mail válido.")]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [Required(ErrorMessage = "Senha obrigatória.")]
-        public string Senha { get; set; }
+        public string? Senha { get; set; }
 
         [Required(ErrorMessage = "O CPF é obrigatório.")]
         [RegularExpression(@"^\d{11}$", ErrorMessage = "CPF com tamanho inválido.")]
