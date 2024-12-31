@@ -74,6 +74,20 @@ namespace APIAssinaturaBarbearia.Filtros
                     };
                     break;
 
+                case ApplicationInvalidTokenException:
+                    contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest
+                    };
+                    break;
+
+                case ApplicationNonMatchException:
+                    contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest
+                    };
+                    break;
+
                 case DomainRenewalNotPaidException:
                     contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
                     {

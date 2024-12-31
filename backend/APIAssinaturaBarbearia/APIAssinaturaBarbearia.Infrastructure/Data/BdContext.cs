@@ -1,5 +1,6 @@
 ﻿using APIAssinaturaBarbearia.Domain.Entities;
 using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUsersUI;
+using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUserTokens;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +14,6 @@ namespace  APIAssinaturaBarbearia.Infrastructure.Data
 
         public DbSet<Assinatura> Assinaturas { get; set; }
         public DbSet<Cliente> Clientes { get; set; }
-
         protected override void OnModelCreating(ModelBuilder md)
         {
             base.OnModelCreating(md);
@@ -23,6 +23,8 @@ namespace  APIAssinaturaBarbearia.Infrastructure.Data
                 .WithOne(a => a.Cliente)
                 .HasForeignKey<Cliente>(c => c.AssinaturaId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            md.Entity<CustomIdentityUserTokens>(c => c.ToTable("AspNetUserTokens"));
         }
     }
 }

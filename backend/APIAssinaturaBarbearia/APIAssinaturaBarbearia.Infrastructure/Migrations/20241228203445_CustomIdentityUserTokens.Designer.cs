@@ -4,6 +4,7 @@ using APIAssinaturaBarbearia.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APIAssinaturaBarbearia.Migrations
 {
     [DbContext(typeof(BdContext))]
-    partial class BdContextModelSnapshot : ModelSnapshot
+    [Migration("20241228203445_CustomIdentityUserTokens")]
+    partial class CustomIdentityUserTokens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,10 +59,10 @@ namespace APIAssinaturaBarbearia.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Cpf")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(11)");
 
                     b.Property<string>("Nome")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(80)");
 
                     b.HasKey("ClienteId");
 

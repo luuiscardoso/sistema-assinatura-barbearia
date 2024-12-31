@@ -13,6 +13,11 @@ using APIAssinaturaBarbearia.Application.Services;
 using APIAssinaturaBarbearia.Domain.Interfaces;
 using APIAssinaturaBarbearia.Infrastructure.Identity;
 using APIAssinaturaBarbearia.Infrastructure.Repositories;
+using APIAssinaturaBarbearia.Infrastructure.Data;
+using System.Reflection;
+using APIAssinaturaBarbearia.Infrastructure.Email;
+using APIAssinaturaBarbearia.Infrastructure.Repositories.Interfaces;
+using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUserTokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +45,9 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "apibarbearia", Version = "v1" });
 
+    var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName));
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {
         Name = "Authorization",
@@ -66,13 +74,17 @@ builder.Services.AddSwaggerGen(c =>
 });
 #endregion
 
-#region Data
+#region Infra
 builder.Services.AddIdentity<Usuario, IdentityRole>()
                 .AddEntityFrameworkStores<BdContext>()
                 .AddDefaultTokenProviders();
 
 string? conexao = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<BdContext>(options => options.UseSqlServer(conexao));
+
+builder.Services.Configure<SmtpConfigs>(builder.Configuration
+                                         .GetSection("Email"));
+
 #endregion
 
 #region Autenticação/JWT Configs
@@ -91,6 +103,8 @@ builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IAssinaturaClienteHandlerService, AssinaturaClienteHandlerService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IResetSenhaTokenRepository<CustomIdentityUserTokens>, ResetSenhaTokenRepository>();
 #endregion
 
 builder.Services.ConfigureRateLimiter(builder.Configuration);
