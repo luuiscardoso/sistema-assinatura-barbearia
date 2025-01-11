@@ -1,34 +1,119 @@
-#  MVP - Controle de clientes e planos de assinatura para corte de cabelo para um barbeiro autonomo.  
+#  API RESTFull de controle de clientes e planos de assinatura de cortes de cabelo para um barbeiro autonomo.  
 
-Nos ultimos meses, venho trabalhando em um projeto em desenvolvimento que surgiu a partir de uma conversa entre mim e meu melhor amigo, que também é barbeiro e autônomo. Durante a conversa falamos sobre a sua dificuldade em implementar um modelo de assinatura de cortes devido a problemas relacionados ao gerenciamento dessas assinaturas, clientes, faturas, datas etc. Pensando nisso, tirei a ideia do papel a partir da identificação dos requisitos, escolha da arquitetura e design patterns.   
+Projeto de desenvolvimento que surgiu a partir de uma conversa entre mim e meu melhor amigo, que também é barbeiro e autônomo. Durante a conversa falamos sobre a sua dificuldade em implementar um modelo de assinatura de cortes devido a problemas relacionados ao gerenciamento dessas assinaturas, clientes, faturas, datas etc. Pensando nisso, tirei a ideia do papel a partir da identificação dos requisitos, escolha da arquitetura e design patterns.   
 
-## Tecnologias 
+## Principais tecnologias
 
-- **Back-end:** 
-  - **ASP.NET Core:** Framework principal para construção da API com C#.  
-  - **Autenticação e Autorização:** JWT e ASP.NET Identity para login do barbeiro.  
-  - **Banco de Dados:** SQL Server, gerenciado com o ORM Entity Framework Core.
-  - **Testes:** xUnit para os testes de unidade e integração.  
+- **C#**
+- **.NET 8**
+- **SQL Server**
+- **Entity Framework**
+- **xUnit**
+- **ASP.NET Identity**
+- **Swagger**
 
-- **Arquitetura e design patterns:**
-  - **Clean Architecture:** Para transferência de dados entre camadas, promovendo encapsulamento.  
-  - **Padrão Repository:** Tratamento centralizado de erros, oferecendo respostas padronizadas e uma experiência aprimorada ao cliente.  
-  - **Unity of work:** Abordagem modular para facilitar a manutenção e expansão de funcionalidades.  
+## Arquitetura e design patterns
+- **Clean Architecture** 
+- **Repository** 
+- **Unity of work** 
 
-## Funcionalidades Implementadas  
+## Serviços Implementadas  
 
 - Gerenciamento de clientes e assinaturas.  
-- Controle de datas de vencimento e renovação.  
+- Controle de datas de vencimento, renovação e pagamento.  
 - Sistema seguro de autenticação e autorização com tokens JWT e Identity.  
 - Tratamento de exceções com filtros e middlewares personalizados.  
-- Documentação detalhada e interativa com Swagger.  
+- Documentação detalhada e interativa com Swagger.
+- Mecanismo de reset e recuperação de senha com integração com e-mail.
+- Testes de unidade e integração.
 
-## Próximos Passos e melhorias futuras a serem desenvolvidas
+## 🚀 Começando
+### Pré-requisitos
 
-1. Concluir a migração para **Clean Architecture**.  
-2. Expandir os **testes unitários** e iniciar os **testes de integração**.  
-3. Desenvolver o **front-end** com **React** (em andamento).  
-4. Adicionar novas funcionalidades e suporte a regras de negócio avançadas.  
-5. Implementar implantação na **nuvem** mediante estudo de uso do **Docker** e **Azure Kubernetes Service (AKS)**.  
-6. Configurar pipelines de CI/CD para automação de deploys com GitHub Actions.  
+Para rodar o projeto localmente, tenha instalado o .NET SDK e o SQL Server com uma instancia rodando em sua máquina. Em seguida, crie um banco de dados para receber o esquema de dados do projeto posteriormente. Após isso, clone o repositório, navegue até o diretório que contem a Program.cs (APIAssinaturaBarbearia) e crie os arquivos appsettings.json, appsettings.Development.json e appsettings.Test.json, substituindo os valores de exemplo pelos seus. Configurações feitas, navegue até o diretório contendo a sln e execute o comando dotnet restore para baixar todas as dependencias do projeto. Finalmente, execute o comando dotnet ef database update para construir o esquema no seu banco de dados e o comando dotnet run para rodar o projeto com toda documentação do swagger. O projeto deverá estar acessível no seu navegador, geralmente em http://localhost:5000, https://localhost:5001 ou outra URL de lauchSettings.json.
+
+```bash
+git clone https://github.com/luuiscardoso/sistema-assinatura-barbearia.git
+```
+
+```bash
+1º cd APIAssinaturaBarbearia
+2º dotnet restore
+3º dotnet ef database update (certifique de ter criado os arquivos appsettings antes)
+4º dotnet run
+```
+
+```
+appsettings.json:
+
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=seuserver;Database=seubanco;Integrated Security=SSPI;TrustServerCertificate=True"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information",
+      "Microsoft.AspNetCore.Routing": "Debug"
+    }
+  },
+  "JWT": {
+    "ChaveSecreta": "suachave",
+    "ValidadeTokenMinutos": 2,
+    "ValidadeRefreshTokenMinutos": 30
+  },
+  "RateLimiter": {
+    "LimiteRequisicoes": 1,
+    "Janela": 3,
+    "LimiteFila": 0
+  },
+  "Email": {
+    "Remetente": "seuemail",
+    "Nome": "seunome",
+    "Senha": "sua senha de aplicativo (gmail) ou senha normal",
+    "Server": "smptserver",
+    "Port": porta do seu smtp server,
+    "Security": "security do seu smtp server"
+  },
+  "AllowedHosts": "*"
+}
+
+appsettings.Development.json:
+
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  }
+}
+
+appsettings.Test.json:
+
+{
+  "ConnectionStrings": {
+    "TestConnection": "Server=seuserver;Database=seubancodetestes;Integrated Security=SSPI;TrustServerCertificate=True"
+  },
+  "Kestrel": {
+    "Endpoints": {
+      "Https": {
+        "Url": "https://localhost:5001"
+      }
+    }
+  },
+  "RateLimiter": {
+    "LimiteRequisicoes": 50,
+    "Janela": 5,
+    "LimiteFila":  0
+  }
+}
+```
+
+## Próximos Passos 
+
+1. Desenvolver o **front-end** com **React** (em andamento).   
+2. Implementar implantação na **nuvem** mediante estudo de uso do **Docker** e **Azure Kubernetes Service (AKS)**.  
+3. Configurar pipelines de CI/CD para automação de deploys com GitHub Actions.  
 
