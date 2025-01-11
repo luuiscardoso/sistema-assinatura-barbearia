@@ -32,7 +32,7 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpGet("{id:int:min(1)}")]
         public async Task<ActionResult<Assinatura>> ObterAssinaturaPorId(int id)
         {
-            Assinatura? assinatura = await _assinaturaService.BuscarAssinaturaEspecifica(id);
+            Assinatura? assinatura = await _assinaturaService.BuscarAssinaturaEspecificaAsync(id);
 
             return Ok(assinatura);
         }
@@ -46,7 +46,7 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Assinatura>>> ObterTodasAssinaturas(int numeroPagina)
         {
-            PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturas(numeroPagina);
+            PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturasAsync(numeroPagina);
 
             HeaderAppend(paginacaoAssinatura);
 
@@ -61,7 +61,7 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpGet("ObterPorCpfCliente")]
         public async Task<ActionResult<Assinatura>> ObterAssinaturaPorCpfCliente(string cpf)
         {
-            Assinatura assinatura = await _assinaturaService.BuscarAssinaturaPorCpfCliente(cpf);
+            Assinatura assinatura = await _assinaturaService.BuscarAssinaturaPorCpfClienteAsync(cpf);
 
             return Ok(assinatura);
         }
@@ -77,7 +77,7 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpGet("ObterPorNomeCliente")]
         public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturaPorNomeCliente(string nome, int numeroPagina)
         {
-            PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturaPorNomeCliente(nome, numeroPagina);
+            PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturaPorNomeClienteAsync(nome, numeroPagina);
 
             HeaderAppend(paginacaoAssinatura);
 
@@ -93,7 +93,7 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpGet("ObterPorStatus")]
         public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturasPorStatus(bool status, int numeroPagina)
         {
-            PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturaPorStatus(status, numeroPagina);
+            PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturaPorStatusAsync(status, numeroPagina);
 
             HeaderAppend(paginacaoAssinatura);
 
@@ -110,7 +110,7 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpGet("ObterPorData")]
         public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturasPorData(DateTime dataInicio, DateTime dataFinal, int numeroPagina)
         {
-            PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturasPorData(dataInicio, dataFinal, numeroPagina);
+            PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturasPorDataAsync(dataInicio, dataFinal, numeroPagina);
 
             HeaderAppend(paginacaoAssinatura);
 
@@ -134,7 +134,7 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpPost("Criar")]
         public async Task<ActionResult> CriarAssinatura(ClienteCadastroDTO clienteDto)
         {
-            var assinaturaCriada = await _assinaturaClienteHandlerService.RegistrarNovaAssinatura(clienteDto);
+            var assinaturaCriada = await _assinaturaClienteHandlerService.RegistrarNovaAssinaturaAsync(clienteDto);
 
             return Created($"Assinaturas/{assinaturaCriada.AssinaturaId}", assinaturaCriada);
         }
@@ -163,7 +163,7 @@ namespace APIAssinaturaBarbearia.Controllers
         {
             if (patchDoc is null || patchDoc.Operations.Count == 0) return BadRequest("JSON Patch nulo ou vazio.");
 
-            Assinatura? assinaturaBd = await _assinaturaService.BuscarAssinaturaEspecifica(id);
+            Assinatura? assinaturaBd = await _assinaturaService.BuscarAssinaturaEspecificaAsync(id);
 
             AssinaturaUpdateDTO assinaturaDto = _mapper.Map<AssinaturaUpdateDTO>(assinaturaBd);
 
@@ -171,7 +171,7 @@ namespace APIAssinaturaBarbearia.Controllers
 
             if (!ModelState.IsValid || !TryValidateModel(assinaturaDto)) return BadRequest(ModelState);
 
-            await _assinaturaClienteHandlerService.ProcessarAtualizacaoAssinatura(assinaturaBd, assinaturaDto);
+            await _assinaturaClienteHandlerService.ProcessarAtualizacaoAssinaturaAsync(assinaturaBd, assinaturaDto);
 
             return NoContent();
         }
@@ -183,7 +183,7 @@ namespace APIAssinaturaBarbearia.Controllers
         [HttpDelete("Deletar/{id:int:min(1)}")]
         public async Task<ActionResult> ExcluirAssinatura(int id)
         {
-            await _assinaturaService.ExcluirAssinatura(id);
+            await _assinaturaService.ExcluirAssinaturaAsync(id);
             return NoContent();
         }
 

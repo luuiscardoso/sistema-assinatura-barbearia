@@ -37,7 +37,7 @@ namespace TestesAPI.UnitTests
         }
 
         [Fact]
-        public void GeraToken_InformandoListaClaimsValida_RetornaJwtSecutiryToken()
+        public void GeraToken_InformandoListaClaimsValida_RetornaJwtSecurityToken()
         {
             //Arrange 
             List<Claim> claims = new List<Claim>()

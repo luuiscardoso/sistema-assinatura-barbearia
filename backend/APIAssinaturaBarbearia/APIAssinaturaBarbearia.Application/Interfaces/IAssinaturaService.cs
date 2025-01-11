@@ -5,18 +5,18 @@ namespace APIAssinaturaBarbearia.Application.Interfaces
 {
     public interface IAssinaturaService
     {
-        Task<Assinatura> BuscarAssinaturaEspecifica(int id);
+        Task<Assinatura> BuscarAssinaturaEspecificaAsync(int id);
 
-        Task<PaginacaoDTO<Assinatura>> BuscarAssinaturas(int numeroPagina);
+        Task<PaginacaoDTO<Assinatura>> BuscarAssinaturasAsync(int numeroPagina);
 
-        Task ExcluirAssinatura(int id);
+        Task ExcluirAssinaturaAsync(int id);
 
-        Task<Assinatura> BuscarAssinaturaPorCpfCliente(string cpf);
+        Task<Assinatura> BuscarAssinaturaPorCpfClienteAsync(string cpf);
 
-        Task<PaginacaoDTO<Assinatura>> BuscarAssinaturaPorNomeCliente(string nome, int numeroPagina);
+        Task<PaginacaoDTO<Assinatura>> BuscarAssinaturaPorNomeClienteAsync(string nome, int numeroPagina);
 
-        Task<PaginacaoDTO<Assinatura>> BuscarAssinaturaPorStatus(bool status, int numeroPagina);
+        Task<PaginacaoDTO<Assinatura>> BuscarAssinaturaPorStatusAsync(bool status, int numeroPagina);
 
-        Task<PaginacaoDTO<Assinatura>> BuscarAssinaturasPorData(DateTime dataInicio, DateTime dataFinal, int numeroPagina);
+        Task<PaginacaoDTO<Assinatura>> BuscarAssinaturasPorDataAsync(DateTime dataInicio, DateTime dataFinal, int numeroPagina);
     }
 }

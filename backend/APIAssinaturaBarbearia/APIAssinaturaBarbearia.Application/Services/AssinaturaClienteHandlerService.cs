@@ -18,9 +18,9 @@ namespace APIAssinaturaBarbearia.Application.Services
             _clienteService = clienteService;
         }
 
-        public async Task<Assinatura> RegistrarNovaAssinatura(ClienteCadastroDTO clienteDto)
+        public async Task<Assinatura> RegistrarNovaAssinaturaAsync(ClienteCadastroDTO clienteDto)
         {
-            IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.Todos("Cliente");
+            IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.TodosAsync("Cliente");
 
             Assinatura? assinaturaBd = assinaturas.FirstOrDefault(a => a.Cliente.Cpf.Equals(clienteDto.Cpf));
 
@@ -41,7 +41,7 @@ namespace APIAssinaturaBarbearia.Application.Services
             return assinatura;
         }
 
-        public async Task ProcessarAtualizacaoAssinatura(Assinatura assinaturaBd, AssinaturaUpdateDTO assinaturaDto)
+        public async Task ProcessarAtualizacaoAssinaturaAsync(Assinatura assinaturaBd, AssinaturaUpdateDTO assinaturaDto)
         {
             if (assinaturaDto.Cpf != null || assinaturaDto.Nome != null)
             {

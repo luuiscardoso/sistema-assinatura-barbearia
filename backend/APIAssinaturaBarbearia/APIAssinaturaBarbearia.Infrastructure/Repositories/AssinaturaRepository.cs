@@ -14,7 +14,7 @@ namespace APIAssinaturaBarbearia.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Assinatura?> ObterPorCpfCliente(string cpf)
+        public async Task<Assinatura?> ObterPorCpfClienteAsync(string cpf)
         {
             Assinatura? assinatura = await _context.Assinaturas.AsQueryable()
                                                       .Include(a => a.Cliente)
@@ -23,7 +23,7 @@ namespace APIAssinaturaBarbearia.Infrastructure.Repositories
         }
 
 
-        public async Task<IEnumerable<Assinatura>> ObterPorNomeCliente(string nome)
+        public async Task<IEnumerable<Assinatura>> ObterPorNomeClienteAsync(string nome)
         {
             IEnumerable<Assinatura> assinaturas = await _context.Assinaturas.AsQueryable()
                                                                .Include(a => a.Cliente)
@@ -33,7 +33,7 @@ namespace APIAssinaturaBarbearia.Infrastructure.Repositories
             return assinaturas;
         }
 
-        public async Task<IEnumerable<Assinatura>> ObterPorStatus(bool status)
+        public async Task<IEnumerable<Assinatura>> ObterPorStatusAsync(bool status)
         {
             IEnumerable<Assinatura> assinaturas = await _context.Assinaturas.AsQueryable()
                                                                             .Include(a => a.Cliente)
@@ -43,7 +43,7 @@ namespace APIAssinaturaBarbearia.Infrastructure.Repositories
             return assinaturas;
         }
 
-        public async Task<IEnumerable<Assinatura>> ObterPorData(DateTime dataInicio, DateTime dataFinal)
+        public async Task<IEnumerable<Assinatura>> ObterPorDataAsync(DateTime dataInicio, DateTime dataFinal)
         {
             IEnumerable<Assinatura> assinaturas = await _context.Assinaturas.AsQueryable()
                                                                             .Include(a => a.Cliente)

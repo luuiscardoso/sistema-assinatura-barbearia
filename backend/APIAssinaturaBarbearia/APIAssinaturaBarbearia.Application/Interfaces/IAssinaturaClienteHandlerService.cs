@@ -5,8 +5,8 @@ namespace APIAssinaturaBarbearia.Application.Interfaces
 {
     public interface IAssinaturaClienteHandlerService
     {
-        Task<Assinatura> RegistrarNovaAssinatura(ClienteCadastroDTO clienteDto);
+        Task<Assinatura> RegistrarNovaAssinaturaAsync(ClienteCadastroDTO clienteDto);
 
-        Task ProcessarAtualizacaoAssinatura(Assinatura assinaturaBd, AssinaturaUpdateDTO assinaturaDto);
+        Task ProcessarAtualizacaoAssinaturaAsync(Assinatura assinaturaBd, AssinaturaUpdateDTO assinaturaDto);
     }
 }

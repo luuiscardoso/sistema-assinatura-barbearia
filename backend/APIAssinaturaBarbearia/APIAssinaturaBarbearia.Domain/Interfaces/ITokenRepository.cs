@@ -9,7 +9,7 @@ namespace APIAssinaturaBarbearia.Domain.Interfaces
 {
     public interface ITokenRepository<T> where T : class
     {
-        Task<T?> Obter(Expression<Func<T, bool>> predicate);
+        Task<T?> ObterAsync(Expression<Func<T, bool>> predicate);
         void Criar(T entity);
         void Excluir(T entity);
     }
