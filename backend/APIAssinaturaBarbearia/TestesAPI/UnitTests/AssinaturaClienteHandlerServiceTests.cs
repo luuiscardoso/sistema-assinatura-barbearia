@@ -40,7 +40,7 @@ namespace TestesAPI.UnitTests
                 }
             };
 
-            mockUnityOfWork.Setup(u => u.AssinaturaRepository.Todos(It.IsAny<string>()))
+            mockUnityOfWork.Setup(u => u.AssinaturaRepository.TodosAsync(It.IsAny<string>()))
                             .ReturnsAsync(assinaturas);
 
             mockUnityOfWork.Setup(u => u.AssinaturaRepository.Criar(It.IsAny<Assinatura>())).Verifiable();
@@ -50,7 +50,7 @@ namespace TestesAPI.UnitTests
             var assinaturaClienteHandler = new AssinaturaClienteHandlerService(mockUnityOfWork.Object, mockClienteService.Object);
 
             //Act
-            var result = assinaturaClienteHandler.RegistrarNovaAssinatura(clienteDto);
+            var result = assinaturaClienteHandler.RegistrarNovaAssinaturaAsync(clienteDto);
 
             //Assert
             mockUnityOfWork.Verify(u => u.AssinaturaRepository.Criar(It.IsAny<Assinatura>()), Times.Once());
@@ -85,13 +85,13 @@ namespace TestesAPI.UnitTests
                 }
             };
 
-            mockUnityOfWork.Setup(u => u.AssinaturaRepository.Todos(It.IsAny<string>()))
+            mockUnityOfWork.Setup(u => u.AssinaturaRepository.TodosAsync(It.IsAny<string>()))
                             .ReturnsAsync(assinaturas);
 
             var assinaturaClienteHandler = new AssinaturaClienteHandlerService(mockUnityOfWork.Object, mockClienteService.Object);
 
             //Act & Assert
-            await Assert.ThrowsAsync<ApplicationAlreadyHasSubscriptionException>(async () => await assinaturaClienteHandler.RegistrarNovaAssinatura(clienteDto));
+            await Assert.ThrowsAsync<ApplicationAlreadyHasSubscriptionException>(async () => await assinaturaClienteHandler.RegistrarNovaAssinaturaAsync(clienteDto));
         }
 
         [Fact]
@@ -119,7 +119,7 @@ namespace TestesAPI.UnitTests
             var assinaturaClienteHandler = new AssinaturaClienteHandlerService(mockUnityOfWork.Object, clienteService.Object);
 
             //Act
-            assinaturaClienteHandler.ProcessarAtualizacaoAssinatura(assinaturaAlterar, assinaturaDto);
+            assinaturaClienteHandler.ProcessarAtualizacaoAssinaturaAsync(assinaturaAlterar, assinaturaDto);
 
             //Assert
             mockUnityOfWork.Verify(u => u.AssinaturaRepository.Atualizar(It.Is<Assinatura>(
@@ -148,7 +148,7 @@ namespace TestesAPI.UnitTests
             var assinaturaClienteHandler = new AssinaturaClienteHandlerService(mockUnityOfWork.Object, clienteService.Object);
 
             //Act
-            assinaturaClienteHandler.ProcessarAtualizacaoAssinatura(assinaturaAlterar, assinaturaDto);
+            assinaturaClienteHandler.ProcessarAtualizacaoAssinaturaAsync(assinaturaAlterar, assinaturaDto);
 
             //Assert
             mockUnityOfWork.Verify(u => u.AssinaturaRepository.Atualizar(It.Is<Assinatura>(
@@ -177,7 +177,7 @@ namespace TestesAPI.UnitTests
             var assinaturaClienteHandler = new AssinaturaClienteHandlerService(mockUnityOfWork.Object, clienteService.Object);
 
             //Act
-            assinaturaClienteHandler.ProcessarAtualizacaoAssinatura(assinaturaAlterar, assinaturaDto);
+            assinaturaClienteHandler.ProcessarAtualizacaoAssinaturaAsync(assinaturaAlterar, assinaturaDto);
 
             //Assert
             mockUnityOfWork.Verify(u => u.AssinaturaRepository.Atualizar(It.Is<Assinatura>(

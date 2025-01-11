@@ -18,7 +18,7 @@ namespace APIAssinaturaBarbearia.Infrastructure.Repositories
             _context.Set<T>().Update(entity);
         }
 
-        public void Criar(T entity)
+        public virtual void Criar(T entity)
         {
             _context.Set<T>().Add(entity);
         }
@@ -28,12 +28,12 @@ namespace APIAssinaturaBarbearia.Infrastructure.Repositories
             _context.Set<T>().Remove(entity);
         }
 
-        public async Task<T?> Obter(Expression<Func<T, bool>> predicate, string propriedadeRelacionada)
+        public async Task<T?> ObterAsync(Expression<Func<T, bool>> predicate, string propriedadeRelacionada)
         {
             return await _context.Set<T>().Include(propriedadeRelacionada).FirstOrDefaultAsync(predicate);
         }
 
-        public async Task <IEnumerable<T>> Todos(string propriedadeRelacionada)      
+        public async Task <IEnumerable<T>> TodosAsync(string propriedadeRelacionada)      
         {
             return await _context.Set<T>().Include(propriedadeRelacionada).AsNoTracking().ToListAsync();
         }

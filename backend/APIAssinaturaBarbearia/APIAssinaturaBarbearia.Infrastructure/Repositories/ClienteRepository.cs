@@ -12,7 +12,7 @@ namespace APIAssinaturaBarbearia.Infrastructure.Repositories
             _context = context;
         }
 
-        public Cliente Criar(Cliente cliente)
+        public new Cliente Criar(Cliente cliente)
         {
             var result = _context.Clientes.Add(cliente);
             return result.Entity;

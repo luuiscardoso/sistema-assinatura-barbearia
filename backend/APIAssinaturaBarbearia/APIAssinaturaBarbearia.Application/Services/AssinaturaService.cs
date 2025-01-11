@@ -14,9 +14,9 @@ namespace APIAssinaturaBarbearia.Application.Services
         {
             _uof = uof;
         }
-        public async Task<Assinatura> BuscarAssinaturaEspecifica(int id)
+        public async Task<Assinatura> BuscarAssinaturaEspecificaAsync(int id)
         {
-            Assinatura? assinatura = await _uof.AssinaturaRepository.Obter(a => a.AssinaturaId == id, "Cliente");
+            Assinatura? assinatura = await _uof.AssinaturaRepository.ObterAsync(a => a.AssinaturaId == id, "Cliente");
 
             if (assinatura is null) 
                 throw new ApplicationNotFoundException("Assinatura não encontrada.");
@@ -24,9 +24,9 @@ namespace APIAssinaturaBarbearia.Application.Services
             return assinatura;
         }
 
-        public async Task<PaginacaoDTO<Assinatura>> BuscarAssinaturas(int numeroPagina)
+        public async Task<PaginacaoDTO<Assinatura>> BuscarAssinaturasAsync(int numeroPagina)
         {
-            IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.Todos("Cliente");
+            IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.TodosAsync("Cliente");
 
             if (!assinaturas.Any())
                 throw new ApplicationNotFoundException("Não existe nenhuma assinatura cadastrada.");
@@ -35,9 +35,9 @@ namespace APIAssinaturaBarbearia.Application.Services
 
             return paginacao;
         }
-        public async Task<Assinatura> BuscarAssinaturaPorCpfCliente(string cpf)
+        public async Task<Assinatura> BuscarAssinaturaPorCpfClienteAsync(string cpf)
         {
-            Assinatura? assinatura = await _uof.AssinaturaRepository.ObterPorCpfCliente(cpf);
+            Assinatura? assinatura = await _uof.AssinaturaRepository.ObterPorCpfClienteAsync(cpf);
 
             if (assinatura is null)
                 throw new ApplicationNotFoundException("Assinatura não encontrada");
@@ -45,9 +45,9 @@ namespace APIAssinaturaBarbearia.Application.Services
             return assinatura;
         }
 
-        public async Task<PaginacaoDTO<Assinatura>> BuscarAssinaturaPorNomeCliente(string nome, int numeroPagina)
+        public async Task<PaginacaoDTO<Assinatura>> BuscarAssinaturaPorNomeClienteAsync(string nome, int numeroPagina)
         {
-            IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.ObterPorNomeCliente(nome);
+            IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.ObterPorNomeClienteAsync(nome);
 
             if (!assinaturas.Any())
                 throw new ApplicationNotFoundException("Não existem assinaturas com esse nome.");
@@ -57,9 +57,9 @@ namespace APIAssinaturaBarbearia.Application.Services
             return paginacao;
         }
 
-        public async Task<PaginacaoDTO<Assinatura>> BuscarAssinaturaPorStatus(bool status, int numeroPagina)
+        public async Task<PaginacaoDTO<Assinatura>> BuscarAssinaturaPorStatusAsync(bool status, int numeroPagina)
         {
-            IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.ObterPorStatus(status);
+            IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.ObterPorStatusAsync(status);
 
             if (!assinaturas.Any())
                 throw new ApplicationNotFoundException("Não existe nenhuma assinatura com esse status.");
@@ -69,12 +69,12 @@ namespace APIAssinaturaBarbearia.Application.Services
             return paginacao;
         }
 
-        public async Task<PaginacaoDTO<Assinatura>> BuscarAssinaturasPorData(DateTime dataInicio, DateTime dataFinal, int numeroPagina)
+        public async Task<PaginacaoDTO<Assinatura>> BuscarAssinaturasPorDataAsync(DateTime dataInicio, DateTime dataFinal, int numeroPagina)
         {
             if (dataInicio >= dataFinal)
                 throw new ApplicationSearchPeriodOfInvalidDatesException("A data de inicio da busca não pode ser anterior ou igual a data final.");
 
-            IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.ObterPorData(dataInicio, dataFinal);
+            IEnumerable<Assinatura> assinaturas = await _uof.AssinaturaRepository.ObterPorDataAsync(dataInicio, dataFinal);
 
             if (!assinaturas.Any())
                 throw new ApplicationNotFoundException("Não existe nenhuma assinatura nesse intervalo de datas.");
@@ -84,9 +84,9 @@ namespace APIAssinaturaBarbearia.Application.Services
             return paginacao;
         }
 
-        public async Task ExcluirAssinatura(int id)
+        public async Task ExcluirAssinaturaAsync(int id)
         {
-            Assinatura? assinatura = await BuscarAssinaturaEspecifica(id);
+            Assinatura? assinatura = await BuscarAssinaturaEspecificaAsync(id);
 
             if (assinatura is null) 
                 throw new ApplicationNotFoundException("Assinatura não encontrada.");
