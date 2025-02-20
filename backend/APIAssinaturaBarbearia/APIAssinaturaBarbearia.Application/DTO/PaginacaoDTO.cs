@@ -14,7 +14,7 @@ namespace APIAssinaturaBarbearia.Application.DTO
         }
         public int QtdRegistrosPorPagina { get; private set; } = 5;
 
-        public int TotalRegistros { get; set; }
+        public int TotalRegistros { get; private set; }
 
         public int TotalPaginas { get; private set; }
 
