@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace APIAssinaturaBarbearia.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("[Controller]")]
     public class AssinaturasController : ControllerBase
