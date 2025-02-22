@@ -6,6 +6,7 @@ Projeto de desenvolvimento que surgiu a partir de uma conversa entre mim e meu m
 
 - **C#**
 - **.NET 8**
+- **Docker**
 - **SQL Server**
 - **Entity Framework**
 - **xUnit**
