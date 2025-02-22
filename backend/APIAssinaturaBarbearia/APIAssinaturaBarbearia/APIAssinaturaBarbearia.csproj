@@ -7,6 +7,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <UserSecretsId>a42b42f9-c73c-47d7-8888-7ad8aa660895</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,6 +40,10 @@
     <ProjectReference Include="..\APIAssinaturaBarbearia.CrossCutting\APIAssinaturaBarbearia.CrossCutting.csproj" />
     <ProjectReference Include="..\APIAssinaturaBarbearia.Domain\APIAssinaturaBarbearia.Domain.csproj" />
     <ProjectReference Include="..\APIAssinaturaBarbearia.Infrastructure\APIAssinaturaBarbearia.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="..\.dockerignore" />
   </ItemGroup>
 
 </Project>
