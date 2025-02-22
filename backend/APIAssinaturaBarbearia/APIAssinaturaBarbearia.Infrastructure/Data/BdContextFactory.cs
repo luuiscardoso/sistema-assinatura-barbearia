@@ -12,7 +12,7 @@ namespace APIAssinaturaBarbearia.Infrastructure.Data
 
             if (!Directory.Exists(basePath))
             {
-                throw new DirectoryNotFoundException($"O diretório base '{basePath}' não foi encontrado.");
+                throw new DirectoryNotFoundException($"O diretório base '{basePath}' não foi encontrado!");
             }
 
             var configuration = new ConfigurationBuilder()
