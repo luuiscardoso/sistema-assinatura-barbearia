@@ -112,9 +112,5 @@ appsettings.Test.json:
 }
 ```
 
-## Próximos Passos 
-
-1. Desenvolver o **front-end** com **React** (em andamento).   
-2. Implementar implantação na **nuvem** mediante estudo de uso do **Docker** e **Azure Kubernetes Service (AKS)**.  
-3. Configurar pipelines de CI/CD para automação de deploys com GitHub Actions.  
+ 
 
