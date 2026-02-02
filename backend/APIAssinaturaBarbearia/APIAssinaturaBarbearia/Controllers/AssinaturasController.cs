@@ -11,7 +11,7 @@ namespace APIAssinaturaBarbearia.Controllers
 {
     //[Authorize]
     [ApiController]
-    [Route("[Controller]")]
+    [Route("subscriptions")]
     public class AssinaturasController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -58,7 +58,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// </summary>
         /// <param name="cpf">CPF do cliente.</param>
         /// <returns>Objeto assinatura.</returns>
-        [HttpGet("ObterPorCpfCliente")]
+        [HttpGet("customer/cpf")]
         public async Task<ActionResult<Assinatura>> ObterAssinaturaPorCpfCliente(string cpf)
         {
             Assinatura assinatura = await _assinaturaService.BuscarAssinaturaPorCpfClienteAsync(cpf);
@@ -74,7 +74,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// <remarks>A lista de assinaturas pode também retornar várias 
         /// assinaturas que contem parte do nome especificado.</remarks>
         /// <returns>Conjunto de assinaturas</returns>
-        [HttpGet("ObterPorNomeCliente")]
+        [HttpGet("customer/name")]
         public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturaPorNomeCliente(string nome, int numeroPagina)
         {
             PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturaPorNomeClienteAsync(nome, numeroPagina);
@@ -90,7 +90,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// <param name="status">Status de ativação.</param>
         /// <param name="numeroPagina">Número da página que se deseja visualizar</param>
         /// <returns>Conjunto de assinaturas</returns>
-        [HttpGet("ObterPorStatus")]
+        [HttpGet("customer/status")]
         public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturasPorStatus(bool status, int numeroPagina)
         {
             PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturaPorStatusAsync(status, numeroPagina);
@@ -107,7 +107,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// <param name="dataFinal">Data final do intervalo</param>
         /// <param name="numeroPagina">Número da página que se deseja visualizar</param>
         /// <returns>Conjunto de assinaturas</returns>
-        [HttpGet("ObterPorData")]
+        [HttpGet("status")]
         public async Task<ActionResult<IEnumerable<Assinatura>>> ObterAssinaturasPorData(DateTime dataInicio, DateTime dataFinal, int numeroPagina)
         {
             PaginacaoDTO<Assinatura> paginacaoAssinatura = await _assinaturaService.BuscarAssinaturasPorDataAsync(dataInicio, dataFinal, numeroPagina);
@@ -131,7 +131,7 @@ namespace APIAssinaturaBarbearia.Controllers
         ///     }
         /// </remarks>
         /// <returns>Assinatura criada</returns>
-        [HttpPost("Criar")]
+        [HttpPost()]
         public async Task<ActionResult> CriarAssinatura(ClienteCadastroDTO clienteDto)
         {
             var assinaturaCriada = await _assinaturaClienteHandlerService.RegistrarNovaAssinaturaAsync(clienteDto);
@@ -158,7 +158,7 @@ namespace APIAssinaturaBarbearia.Controllers
         ///     
         /// Propriedades passiveis de alteração: status,nome do cliente, cpf do cliente e data de expiração. 
         /// </remarks>
-        [HttpPatch("Alterar/{id:int:min(1)}")]
+        [HttpPatch("{id:int:min(1)}")]
         public async Task<ActionResult<Assinatura>> AlterarAssinatura(int id, JsonPatchDocument<AssinaturaUpdateDTO> patchDoc)
         {
             if (patchDoc is null || patchDoc.Operations.Count == 0) return BadRequest("JSON Patch nulo ou vazio.");
@@ -180,7 +180,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// Exclui uma assinatura.
         /// </summary>
         /// <param name="id">ID da assinatura a ser exluida.</param>
-        [HttpDelete("Deletar/{id:int:min(1)}")]
+        [HttpDelete("{id:int:min(1)}")]
         public async Task<ActionResult> ExcluirAssinatura(int id)
         {
             await _assinaturaService.ExcluirAssinaturaAsync(id);

@@ -11,7 +11,7 @@ using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUsersUI;
 namespace APIAssinaturaBarbearia.Controllers
 {
     [ApiController]
-    [Route("[Controller]")]
+    [Route("auth")]
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -29,7 +29,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// <param name="loginDTO">Email e senha do usuário</param>
         /// <returns>Access token e refresh token.</returns>
         #region AllUsers
-        [HttpPost("Login")]
+        [HttpPost("sessions")]
         public async Task<ActionResult> Login(LoginDTO loginDTO)
         {
             TokenResponseDTO tokenResponseDTO = await _userService.LoginAsync(loginDTO);
@@ -42,7 +42,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// </summary>
         /// <param name="tokenDTO">Access token e refresh token.</param>
         /// <returns>Novos access token e refresh token.</returns>
-        [HttpPost("RenovarToken")]
+        [HttpPost("sessions/refresh")]
         public async Task<ActionResult> RenovarToken(TokenRequestDTO tokenDTO)
         {
             TokenResponseDTO tokenResponseDTO = await _userService.RenovarTokenAsync(tokenDTO);
@@ -51,10 +51,10 @@ namespace APIAssinaturaBarbearia.Controllers
         }
 
         /// <summary>
-        /// Muda a senha do usuário.
+        /// Muda a senha do usuário admin.
         /// </summary>
-        /// <param name="model">Email, senha atual e nova senha do usuário.</param>
-        [HttpPost("RedefinirSenha")]
+        /// <param name="model">Email, senha atual e nova senha do usuário admin.</param>
+        [HttpPost("admins/password-resets")]
         public async Task<ActionResult> RedefinirSenha(BarbeiroRedefinicaoSenhaDTO model)
         {
             IEnumerable<string> result = await _userService.RedefinirSenhaAsync(model);
@@ -76,7 +76,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// <remarks>A desconexão de um usuário do sistema pode ser feita 
         /// por um terceiro desde que o mesmo tenha papel de administrador.</remarks>
         [Authorize]
-        [HttpPost("RevogarAcesso")]
+        [HttpDelete("sessions")]
         public async Task<ActionResult> RevogarRefreshToken(string email)
         {
             await _userService.RevogarRefreshTokenAsync(email, User);
@@ -89,7 +89,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// </summary>
         /// <param name="email">E-mail do usuário</param>
         /// <returns></returns>
-        [HttpPost("ResetSenha/GerarToken")]
+        [HttpPost("password-resets")]
         public async Task<ActionResult<string>> GerarTokenResetSenha(string email)
         {
             await _userService.GerarTokenResetSenhaAsync(email);
@@ -102,7 +102,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// </summary>
         /// <param name="token">Token recebido no email para reset de senha.</param>
         /// <returns></returns>
-        [HttpPost("ResetSenha/ValidarToken")]
+        [HttpPost("password-resets/token-valid")]
         public async Task<ActionResult<string>> VerificaTokenResetSenha(string token)
         {
             await _userService.VerificaTokenResetSenhaAsync(token);
@@ -115,7 +115,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// </summary>
         /// <param name="resetSenhaDTO">Token, e-mail e senha.</param>
         /// <returns></returns>
-        [HttpPost("ResetSenha/ResetarSenha")]
+        [HttpPost("users/password-resets")]
         public async Task<ActionResult<string>> ResetarSenha(ResetSenhaDTO resetSenhaDTO)
         {
             await _userService.ResetSenhaAsync(resetSenhaDTO);
@@ -132,7 +132,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// <param name="usuarioCadastroDTO">Email, senha, cpf e nome.</param>
         /// <returns></returns>
         [Authorize(Policy = "AdminOnly")]
-        [HttpPost("Admin/RegistroUsuario")]
+        [HttpPost("admins/user")]
         public async Task<ActionResult> AdminCriarUsuario(UsuarioCadastroDTO usuarioCadastroDTO)
         {
             IEnumerable<string> result = await _adminService.CriarUsuarioAsync(usuarioCadastroDTO);
@@ -152,7 +152,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// </summary>
         /// <param name="perfil">Novo perfil.</param>
         [Authorize(Policy = "AdminOnly")]
-        [HttpPost("Admin/CriarPerfil")]
+        [HttpPost("admins/profile")]
         public async Task<ActionResult> CriarPerfil(string perfil) 
         {
             IEnumerable<string> result = await _adminService.CriarPerfilAsync(perfil);
@@ -172,7 +172,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// </summary>
         /// <param name="perfil">Perfil a ser excluido.</param>
         [Authorize(Policy = "AdminOnly")]
-        [HttpDelete("Admin/ExcluirPerfil")]
+        [HttpDelete("admins/profile")]
         public async Task<ActionResult> DeletarPerfil(string perfil)
         {
             var result = await _adminService.DeletarPerfilAsync(perfil);
@@ -193,7 +193,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// <param name="email">Email do usuário.</param>
         /// <param name="role">Perfil a ser associado.</param>
         [Authorize(Policy = "AdminOnly")]
-        [HttpPost("Admin/AssociarPerfilUsuario")]
+        [HttpPost("admins/user-role")]
         public async Task<ActionResult> AssociarPerfilUsuario(string email, string role)
         {
             var result = await _adminService.AssociarPerfilUsuarioAsync(email, role);
@@ -213,7 +213,7 @@ namespace APIAssinaturaBarbearia.Controllers
         /// </summary>
         /// <param name="email">Email do usuário a ser deletado.</param>
         [Authorize(Policy = "AdminOnly")]
-        [HttpDelete("Admin/ExcluirUsuario")]
+        [HttpDelete("admins/user")]
         public async Task<ActionResult> DeletarUsuario(string email)
         {
             IEnumerable<string> result = await _adminService.DeletarUsuarioAsync(email);
