@@ -50,8 +50,11 @@ namespace TestesAPI.IntegrationTests.CustomFactoryConfig
                                         }));
                 });
 
-                
-                services.AddDbContext<BdContext>(op => op.UseSqlServer(configuration.GetConnectionString("TestConnection")));
+
+                services.AddDbContext<BdContext>(options =>
+                {
+                    options.UseInMemoryDatabase("TestDb");
+                });
 
                 services.PostConfigure<HttpsRedirectionOptions>(options =>
                 {

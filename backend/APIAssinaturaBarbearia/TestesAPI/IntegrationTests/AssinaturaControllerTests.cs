@@ -17,6 +17,7 @@ using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUsersUI;
 using APIAssinaturaBarbearia.Application.DTO;
 using APIAssinaturaBarbearia.Domain.Entities;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace TestesAPI.IntegrationTests
 {
@@ -48,8 +49,8 @@ namespace TestesAPI.IntegrationTests
         {
             LoginDTO loginDTO = new LoginDTO()
             {
-                Email = "teste@gmail.com",
-                Senha = "@Teste123"
+                Email = "teste@gmail",
+                Senha = "@mM12345678"
             };
             var authController = new AuthController(_userService, _adminService);
             OkObjectResult? result = (await authController.Login(loginDTO)) as OkObjectResult;
@@ -65,7 +66,7 @@ namespace TestesAPI.IntegrationTests
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenObject.Token);
 
             //Act
-            HttpResponseMessage response = await _httpClient.GetAsync("/Assinaturas?numeroPagina=1");
+            HttpResponseMessage response = await _httpClient.GetAsync("subscriptions?numeroPagina=1");
 
             //Assert 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -82,7 +83,7 @@ namespace TestesAPI.IntegrationTests
             var id = assinatura.AssinaturaId;
 
             //Act
-            HttpResponseMessage response = await _httpClient.GetAsync($"Assinaturas/{id}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"subscriptions/{id}");
             var content = await response.Content.ReadAsStringAsync();
             Assinatura? assinaturaRetornada = JsonConvert.DeserializeObject<Assinatura>(content);
 
@@ -104,7 +105,7 @@ namespace TestesAPI.IntegrationTests
             StringContent content = new StringContent(JsonConvert.SerializeObject(clienteDTO), Encoding.UTF8, "application/json");
 
             //Act
-            HttpResponseMessage response = await _httpClient.PostAsync("Assinaturas/Criar", content);
+            HttpResponseMessage response = await _httpClient.PostAsync("subscriptions", content);
             var assinaturaCriada = _context.Assinaturas.Include(a => a.Cliente).Single(a => a.Cliente.Cpf == clienteDTO.Cpf);
             var clienteCriado = assinaturaCriada.Cliente;
 
@@ -134,7 +135,7 @@ namespace TestesAPI.IntegrationTests
             StringContent content = new StringContent(serializedContent, Encoding.UTF8, "application/json-patch+json");
 
             //Act
-            var response = await _httpClient.PatchAsync($"Assinaturas/Alterar/{id}", content);
+            var response = await _httpClient.PatchAsync($"subscriptions/{id}", content);
             var assinaturaAtualizada = _context.Assinaturas.AsNoTracking()
                                                            .Include(a => a.Cliente)
                                                            .Single(a => a.AssinaturaId == assinatura.AssinaturaId);
@@ -160,7 +161,7 @@ namespace TestesAPI.IntegrationTests
             var id = assinaturaExcluir.AssinaturaId;
 
             //Act
-            var response = await _httpClient.DeleteAsync($"Assinaturas/Deletar/{id}");
+            var response = await _httpClient.DeleteAsync($"subscriptions/{id}");
             bool excluiu = (_context.Assinaturas.AsNoTracking().FirstOrDefault(a => a.AssinaturaId == id)) is null;
 
             //Assert
@@ -181,7 +182,9 @@ namespace TestesAPI.IntegrationTests
                 new Cliente(){Nome = "Teste1", Cpf = "12345678900", Assinatura = assinaturas[0]},
                 new Cliente(){Nome = "Teste2", Cpf = "32145478922", Assinatura = assinaturas[1]}
             };
-
+            //await _adminService.CriarPerfilAsync("Admin");
+            await _adminService.CriarUsuarioAsync(new UsuarioCadastroDTO { Cpf = "12345678901", Email = "teste@gmail", Nome = "teste", Senha = "@mM12345678" });
+            //await _adminService.AssociarPerfilUsuarioAsync("teste@gmail", "Admin");
             await _context.Assinaturas.AddRangeAsync(assinaturas);
             await _context.Clientes.AddRangeAsync(clientes);
             await _context.SaveChangesAsync();
@@ -189,7 +192,8 @@ namespace TestesAPI.IntegrationTests
 
         public async Task DisposeAsync()
         {
-            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Assinaturas");
+            await _context.Database.EnsureDeletedAsync();
+            await _context.DisposeAsync();
         }
     }
 }
