@@ -79,7 +79,7 @@ builder.Services.AddIdentity<Usuario, IdentityRole>()
                 .AddDefaultTokenProviders();
 
 string? conexao = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<BdContext>(options => options.UseSqlServer(conexao));
+builder.Services.AddDbContext<BdContext>(options => options.UseNpgsql(conexao));
 
 builder.Services.Configure<SmtpConfigs>(builder.Configuration
                                          .GetSection("Email"));
