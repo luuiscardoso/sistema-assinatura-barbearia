@@ -1,25 +1,25 @@
+using APIAssinaturaBarbearia.Application.Interfaces;
+using APIAssinaturaBarbearia.Application.Services;
+using APIAssinaturaBarbearia.CrossCutting.GlobalExceptions;
+using APIAssinaturaBarbearia.CrossCutting.IoC;
+using APIAssinaturaBarbearia.CrossCutting.Security;
+using APIAssinaturaBarbearia.Domain.Interfaces;
 using APIAssinaturaBarbearia.Filtros;
 using APIAssinaturaBarbearia.Infrastructure.Data;
+using APIAssinaturaBarbearia.Infrastructure.Email;
+using APIAssinaturaBarbearia.Infrastructure.Identity;
 using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUsersUI;
+using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUserTokens;
+using APIAssinaturaBarbearia.Infrastructure.Repositories;
+using APIAssinaturaBarbearia.Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using System.Text.Json.Serialization;
-using APIAssinaturaBarbearia.CrossCutting.IoC;
-using APIAssinaturaBarbearia.CrossCutting.Security;
-using APIAssinaturaBarbearia.CrossCutting.GlobalExceptions;
-using APIAssinaturaBarbearia.Application.Interfaces;
-using APIAssinaturaBarbearia.Application.Services;
-using APIAssinaturaBarbearia.Domain.Interfaces;
-using APIAssinaturaBarbearia.Infrastructure.Identity;
-using APIAssinaturaBarbearia.Infrastructure.Repositories;
-using APIAssinaturaBarbearia.Infrastructure.Data;
 using System.Reflection;
-using APIAssinaturaBarbearia.Infrastructure.Email;
-using APIAssinaturaBarbearia.Infrastructure.Repositories.Interfaces;
-using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUserTokens;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddAWSLambdaHosting(LambdaEventSource.ApplicationLoadBalancer);
 
 // Add services to the container.
 
@@ -111,13 +111,15 @@ builder.Services.ConfigureRateLimiter(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Staging"))
 {
     app.ConfigureExceptionHandler();
+    app.UseSwagger();
+    app.UseSwaggerUI(c => {
+        c.RoutePrefix = "swagger";
+        c.SwaggerEndpoint("v1/swagger.json", "Projeto Barbearia API v1");
+    });
 }
-
-app.UseSwagger();
-app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseRateLimiter();
