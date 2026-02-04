@@ -16,12 +16,7 @@ namespace TestesAPI.IntegrationTests.CustomFactoryConfig
     public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
-        {
-            builder.ConfigureAppConfiguration(config =>
-            {
-                config.AddJsonFile("appsettings.Test.json");
-            });
-   
+        {   
             builder.ConfigureServices(services =>
             {
                 var contextDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<BdContext>));
@@ -31,8 +26,6 @@ namespace TestesAPI.IntegrationTests.CustomFactoryConfig
                 {
                     services.Remove(contextDescriptor);
                 }
-
-                var configuration = sp.GetRequiredService<IConfiguration>();
 
                 services.AddRateLimiter(options =>
                 {
@@ -44,9 +37,9 @@ namespace TestesAPI.IntegrationTests.CustomFactoryConfig
                                         factory: partition => new FixedWindowRateLimiterOptions
                                         {
                                             AutoReplenishment = true,
-                                            PermitLimit = configuration.GetSection("RateLimiter").GetValue<int>("LimiteRequisicoes"),
-                                            QueueLimit = configuration.GetSection("RateLimiter").GetValue<int>("LimiteFila"),
-                                            Window = TimeSpan.FromSeconds(configuration.GetSection("RateLimiter").GetValue<double>("Janela"))
+                                            PermitLimit = 10,
+                                            QueueLimit = 0,
+                                            Window = TimeSpan.FromSeconds(10)
                                         }));
                 });
 
