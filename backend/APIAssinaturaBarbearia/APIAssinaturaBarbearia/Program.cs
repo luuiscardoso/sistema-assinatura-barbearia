@@ -1,7 +1,8 @@
 using APIAssinaturaBarbearia.Application.Interfaces;
 using APIAssinaturaBarbearia.Application.Services;
-using APIAssinaturaBarbearia.CrossCutting.GlobalExceptions;
 using APIAssinaturaBarbearia.CrossCutting.IoC;
+using APIAssinaturaBarbearia.CrossCutting.Middlewares;
+using APIAssinaturaBarbearia.CrossCutting.Middlewares.GlobalExceptions;
 using APIAssinaturaBarbearia.CrossCutting.Security;
 using APIAssinaturaBarbearia.Domain.Interfaces;
 using APIAssinaturaBarbearia.Filtros;
@@ -125,6 +126,15 @@ app.UseHttpsRedirection();
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseWhen(
+    context => context.Request.Path.StartsWithSegments("/novoendpointFiltro"),
+    app =>
+    {
+        app.UseMiddleware<ValidateSearchFieldsMiddleware>();
+    }
+);
+
 app.MapControllers();
 app.Run();
 

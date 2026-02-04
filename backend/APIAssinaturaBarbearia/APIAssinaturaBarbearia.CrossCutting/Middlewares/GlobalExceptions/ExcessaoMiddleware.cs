@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 
-namespace APIAssinaturaBarbearia.CrossCutting.GlobalExceptions
+namespace APIAssinaturaBarbearia.CrossCutting.Middlewares.GlobalExceptions
 {
     public static class ExcessaoMiddleware
     {
