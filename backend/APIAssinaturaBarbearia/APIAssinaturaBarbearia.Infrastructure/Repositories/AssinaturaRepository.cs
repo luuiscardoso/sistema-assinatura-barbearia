@@ -2,6 +2,9 @@
 using APIAssinaturaBarbearia.Domain.Entities;
 using APIAssinaturaBarbearia.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using APIAssinaturaBarbearia.Domain.DTO;
+using APIAssinaturaBarbearia.Infrastructure.Extensions;
+using Microsoft.Win32;
 
 namespace APIAssinaturaBarbearia.Infrastructure.Repositories
 {
@@ -52,6 +55,18 @@ namespace APIAssinaturaBarbearia.Infrastructure.Repositories
                                                                             .ToListAsync();
 
             return assinaturas;
+        }
+
+        public async Task<PaginacaoDTO<Assinatura>> FiltrarAssinaturas(SearchFilterDTO searchFilterDTO)
+        {
+            var query = await _context.Assinaturas.AsQueryable()
+                                .Search(searchFilterDTO)
+                                .Skip((searchFilterDTO.PageNumber - 1) * 10)
+                                .Take(10)
+                                .Include(a => a.Cliente)
+                                .ToListAsync();
+
+            return new PaginacaoDTO<Assinatura>(query, searchFilterDTO.PageNumber, query.Count());
         }
     }
 }
