@@ -20,7 +20,7 @@ namespace APIAssinaturaBarbearia.Infrastructure.Email
         public async Task EnviarEmailAsync(string email, string titulo, string corpo)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(_smtpConfigs.Nome, _smtpConfigs.Remetente));
+            message.From.Add(new MailboxAddress("Luis", _smtpConfigs.Remetente));
             message.To.Add(new MailboxAddress("Destinatário", email));
             message.Subject = titulo;
             message.Body = new TextPart("html")
@@ -28,11 +28,11 @@ namespace APIAssinaturaBarbearia.Infrastructure.Email
                 Text = corpo,
             };
 
-            var security = _smtpConfigs.Security == "STARTTLS" ?  MailKit.Security.SecureSocketOptions.StartTls : MailKit.Security.SecureSocketOptions.SslOnConnect;
+            var security = MailKit.Security.SecureSocketOptions.StartTls;
 
             using (var smtpClient = new SmtpClient())
             {
-                await smtpClient.ConnectAsync(_smtpConfigs.Server, _smtpConfigs.Port, security);
+                await smtpClient.ConnectAsync("smtp.gmail.com", 587, security);
                 await smtpClient.AuthenticateAsync(_smtpConfigs.Remetente, _smtpConfigs.Senha);
                 await smtpClient.SendAsync(message);
                 await smtpClient.DisconnectAsync(true);

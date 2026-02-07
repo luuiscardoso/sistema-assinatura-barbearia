@@ -28,7 +28,7 @@ namespace APIAssinaturaBarbearia.CrossCutting.Security
                                         {
                                             AutoReplenishment = true,
                                             PermitLimit = config.GetSection("RateLimiter").GetValue<int>("LimiteRequisicoes"),
-                                            QueueLimit = config.GetSection("RateLimiter").GetValue<int>("LimiteFila"),
+                                            QueueLimit = 0,
                                             Window = TimeSpan.FromSeconds(config.GetSection("RateLimiter").GetValue<double>("Janela"))
                                         }));
             });
