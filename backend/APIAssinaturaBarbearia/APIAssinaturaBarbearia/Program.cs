@@ -1,4 +1,5 @@
 using APIAssinaturaBarbearia.Application.Interfaces;
+using APIAssinaturaBarbearia.Application.Options;
 using APIAssinaturaBarbearia.Application.Services;
 using APIAssinaturaBarbearia.CrossCutting.IoC;
 using APIAssinaturaBarbearia.CrossCutting.Middlewares;
@@ -105,6 +106,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IResetSenhaTokenRepository<CustomIdentityUserTokens>, ResetSenhaTokenRepository>();
+builder.Services
+    .AddOptions<SeedOptions>()
+    .Bind(builder.Configuration.GetSection("IdentitySeed"));
 #endregion
 
 builder.Services.ConfigureRateLimiter(builder.Configuration);
@@ -120,6 +124,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Staging"))
         c.RoutePrefix = "swagger";
         c.SwaggerEndpoint("v1/swagger.json", "Projeto Barbearia API v1");
     });
+
+    await IdentitySeed.SeedAsync(app.Services);
 }
 
 app.UseHttpsRedirection();
@@ -128,10 +134,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseWhen(
-    context => context.Request.Path.StartsWithSegments("/novoendpointFiltro"),
+    context => context.Request.Path.StartsWithSegments("/search"),
     app =>
     {
         app.UseMiddleware<ValidateSearchFieldsMiddleware>();
+        Console.WriteLine("entrou no middleware");
     }
 );
 

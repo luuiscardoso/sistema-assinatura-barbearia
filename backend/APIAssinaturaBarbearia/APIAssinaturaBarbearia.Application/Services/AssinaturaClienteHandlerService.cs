@@ -1,7 +1,7 @@
 ﻿using APIAssinaturaBarbearia.Application.Interfaces;
 using AutoMapper;
 using APIAssinaturaBarbearia.Domain.Interfaces;
-using APIAssinaturaBarbearia.Application.DTO;
+using APIAssinaturaBarbearia.Domain.DTO;
 using APIAssinaturaBarbearia.Domain.Entities;
 using APIAssinaturaBarbearia.Application.Exceptions;
 
@@ -27,7 +27,7 @@ namespace APIAssinaturaBarbearia.Application.Services
             if (assinaturaBd is not null)
                 throw new ApplicationAlreadyHasSubscriptionException("Esse cliente já possui assinatura.");
 
-            Assinatura assinatura = new Assinatura(DateTime.Now, DateTime.Now.AddMonths(1), true);
+            Assinatura assinatura = new Assinatura(DateTime.UtcNow, DateTime.UtcNow.AddMonths(1), true);
 
             _uof.AssinaturaRepository.Criar(assinatura); 
 

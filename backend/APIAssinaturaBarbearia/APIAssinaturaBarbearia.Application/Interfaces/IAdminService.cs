@@ -1,4 +1,4 @@
-﻿using APIAssinaturaBarbearia.Application.DTO;
+﻿using APIAssinaturaBarbearia.Domain.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,4 +1,4 @@
-﻿using APIAssinaturaBarbearia.Application.DTO;
+﻿using APIAssinaturaBarbearia.Domain.DTO;
 using APIAssinaturaBarbearia.Domain.Entities;
 
 namespace APIAssinaturaBarbearia.Application.Interfaces

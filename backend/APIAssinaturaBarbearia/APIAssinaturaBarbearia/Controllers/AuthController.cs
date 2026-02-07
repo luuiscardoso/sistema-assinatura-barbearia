@@ -1,11 +1,7 @@
 ﻿using APIAssinaturaBarbearia.Application.Interfaces;
-using APIAssinaturaBarbearia.Application.DTO;
+using APIAssinaturaBarbearia.Domain.DTO;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUsersUI;
 
 
 namespace APIAssinaturaBarbearia.Controllers

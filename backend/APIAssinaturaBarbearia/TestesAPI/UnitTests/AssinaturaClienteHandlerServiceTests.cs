@@ -1,16 +1,10 @@
-﻿using APIAssinaturaBarbearia.Application.DTO;
-using APIAssinaturaBarbearia.Application.Exceptions;
+﻿using APIAssinaturaBarbearia.Application.Exceptions;
 using APIAssinaturaBarbearia.Application.Interfaces;
 using APIAssinaturaBarbearia.Application.Services;
+using APIAssinaturaBarbearia.Domain.DTO;
 using APIAssinaturaBarbearia.Domain.Entities;
 using APIAssinaturaBarbearia.Domain.Interfaces;
-using AutoMapper;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TestesAPI.UnitTests
 {

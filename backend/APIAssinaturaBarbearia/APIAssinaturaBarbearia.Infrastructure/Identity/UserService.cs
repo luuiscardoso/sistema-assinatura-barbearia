@@ -1,22 +1,14 @@
-﻿using APIAssinaturaBarbearia.Application.DTO;
+﻿using APIAssinaturaBarbearia.Application.Exceptions;
 using APIAssinaturaBarbearia.Application.Interfaces;
+using APIAssinaturaBarbearia.Domain.DTO;
+using APIAssinaturaBarbearia.Infrastructure.Data;
 using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUsersUI;
+using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUserTokens;
+using APIAssinaturaBarbearia.Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using APIAssinaturaBarbearia.Application.Exceptions;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUserTokens;
-using APIAssinaturaBarbearia.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Primitives;
-using APIAssinaturaBarbearia.Domain.Interfaces;
-using APIAssinaturaBarbearia.Infrastructure.Repositories.Interfaces;
-using APIAssinaturaBarbearia.Infrastructure.Repositories;
 
 
 namespace APIAssinaturaBarbearia.Infrastructure.Identity

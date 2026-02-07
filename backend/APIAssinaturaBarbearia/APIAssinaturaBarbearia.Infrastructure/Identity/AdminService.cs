@@ -1,6 +1,7 @@
-﻿using APIAssinaturaBarbearia.Application.DTO;
+﻿using APIAssinaturaBarbearia.Domain.DTO;
 using APIAssinaturaBarbearia.Application.Exceptions;
 using APIAssinaturaBarbearia.Application.Interfaces;
+using APIAssinaturaBarbearia.Domain.DTO;
 using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUsersUI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

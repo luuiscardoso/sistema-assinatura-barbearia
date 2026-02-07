@@ -1,23 +1,18 @@
-﻿using APIAssinaturaBarbearia.Controllers;
-using Microsoft.AspNetCore.Identity;
+﻿using APIAssinaturaBarbearia.Application.Interfaces;
+using APIAssinaturaBarbearia.Controllers;
+using APIAssinaturaBarbearia.Domain.DTO;
+using APIAssinaturaBarbearia.Domain.Entities;
+using APIAssinaturaBarbearia.Infrastructure.Data;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using TestesAPI.IntegrationTests.CustomFactoryConfig;
-using System.Net.Http.Headers;
-using System.Text.Json;
-using Microsoft.AspNetCore.JsonPatch;
-using Newtonsoft.Json;
-using APIAssinaturaBarbearia.Infrastructure.Data;
-using APIAssinaturaBarbearia.Application.Interfaces;
-using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUsersUI;
-using APIAssinaturaBarbearia.Application.DTO;
-using APIAssinaturaBarbearia.Domain.Entities;
-using Microsoft.Extensions.Logging;
-using System;
 
 namespace TestesAPI.IntegrationTests
 {

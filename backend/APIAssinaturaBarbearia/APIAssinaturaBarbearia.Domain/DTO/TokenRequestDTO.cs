@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace APIAssinaturaBarbearia.Application.DTO
+namespace APIAssinaturaBarbearia.Domain.DTO
 {
     public class TokenRequestDTO
     {

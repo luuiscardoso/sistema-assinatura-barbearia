@@ -35,21 +35,21 @@ namespace APIAssinaturaBarbearia.Filtros
                 case ApplicationInvalidCredentialsException:
                     contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
                     {
-                        StatusCode = StatusCodes.Status400BadRequest
+                        StatusCode = StatusCodes.Status401Unauthorized
                     };
                     break;
 
                 case ApplicationInvalidRefreshTokenException:
                     contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
                     {
-                        StatusCode = StatusCodes.Status400BadRequest
+                        StatusCode = StatusCodes.Status401Unauthorized
                     };
                     break;
 
                 case ApplicationRevocationAccessException:
                     contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
                     {
-                        StatusCode = StatusCodes.Status400BadRequest
+                        StatusCode = StatusCodes.Status401Unauthorized
                     };
                     break;
 
@@ -77,7 +77,7 @@ namespace APIAssinaturaBarbearia.Filtros
                 case ApplicationInvalidTokenException:
                     contextRequest.Result = new BadRequestObjectResult(contextRequest.Exception.Message)
                     {
-                        StatusCode = StatusCodes.Status400BadRequest
+                        StatusCode = StatusCodes.Status401Unauthorized
                     };
                     break;
 

@@ -23,7 +23,7 @@ namespace APIAssinaturaBarbearia.Infrastructure.Data
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             var optionsBuilder = new DbContextOptionsBuilder<BdContext>();
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseNpgsql(connectionString);
 
             return new BdContext(optionsBuilder.Options);
         }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace APIAssinaturaBarbearia.Application.DTO
+namespace APIAssinaturaBarbearia.Domain.DTO
 {
     public class ResetSenhaDTO
     {
