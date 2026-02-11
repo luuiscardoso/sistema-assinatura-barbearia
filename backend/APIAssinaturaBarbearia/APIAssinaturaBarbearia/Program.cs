@@ -1,3 +1,5 @@
+using Amazon;
+using Amazon.Runtime;
 using APIAssinaturaBarbearia.Application.Interfaces;
 using APIAssinaturaBarbearia.Application.Options;
 using APIAssinaturaBarbearia.Application.Services;
@@ -22,6 +24,16 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.ApplicationLoadBalancer);
+
+builder.Configuration.AddSecretsManager(
+    region: RegionEndpoint.USEast1,
+    configurator: options =>
+    {
+        options.SecretFilter = entry => entry.Name.StartsWith("apibarbearia/" + "Staging");
+
+        options.KeyGenerator = (secret, key) =>
+            key.Replace("__", ":").Replace("apibarbearia/Staging:", "");
+    });
 
 // Add services to the container.
 
