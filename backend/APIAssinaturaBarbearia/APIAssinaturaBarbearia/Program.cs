@@ -23,7 +23,7 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddAWSLambdaHosting(LambdaEventSource.ApplicationLoadBalancer);
+builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 
 builder.Configuration.AddSecretsManager(
     region: RegionEndpoint.USEast1,
@@ -35,7 +35,7 @@ builder.Configuration.AddSecretsManager(
             key.Replace("__", ":").Replace("apibarbearia/Staging:", "");
     });
 
-// Add services to the container.
+//Add services to the container.
 
 #region Controllers Configs
 builder.Services.AddControllers(options =>
@@ -119,8 +119,10 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IResetSenhaTokenRepository<CustomIdentityUserTokens>, ResetSenhaTokenRepository>();
 builder.Services
-    .AddOptions<SeedOptions>()
-    .Bind(builder.Configuration.GetSection("IdentitySeed"));
+    .AddOptions<SmtpConfigs>()
+    .Bind(builder.Configuration.GetSection("Email"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 #endregion
 
 builder.Services.ConfigureRateLimiter(builder.Configuration);
@@ -150,7 +152,6 @@ app.UseWhen(
     app =>
     {
         app.UseMiddleware<ValidateSearchFieldsMiddleware>();
-        Console.WriteLine("entrou no middleware");
     }
 );
 
