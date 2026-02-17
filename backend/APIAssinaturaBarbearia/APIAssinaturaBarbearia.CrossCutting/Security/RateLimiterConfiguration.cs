@@ -27,9 +27,9 @@ namespace APIAssinaturaBarbearia.CrossCutting.Security
                                         factory: partition => new FixedWindowRateLimiterOptions
                                         {
                                             AutoReplenishment = true,
-                                            PermitLimit = config.GetSection("RateLimiter").GetValue<int>("LimiteRequisicoes"),
+                                            PermitLimit = 3,
                                             QueueLimit = 0,
-                                            Window = TimeSpan.FromSeconds(config.GetSection("RateLimiter").GetValue<double>("Janela"))
+                                            Window = TimeSpan.FromSeconds(5)
                                         }));
             });
         }

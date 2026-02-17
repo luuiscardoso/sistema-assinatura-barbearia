@@ -7,10 +7,10 @@ public class ValidateSearchFieldsMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly HashSet<string> _fields;
-    public ValidateSearchFieldsMiddleware(RequestDelegate next, IEnumerable<string> fields)
+    public ValidateSearchFieldsMiddleware(RequestDelegate next)
     {
         _next = next;
-        _fields = fields.Select(f => f.ToLowerInvariant()).ToHashSet();
+        _fields = new HashSet<string>(["cpf", "email", "dataInicio", "dataFinal", "status", "nome"]);
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -33,7 +33,7 @@ public class ValidateSearchFieldsMiddleware
             await context.Response.WriteAsJsonAsync(new ProblemDetails
             {
                 Title = "Invalid search parameters",
-                Detail = "One or more fields are not supposed to be used as filter parameters. Valid fields: CPF, Status, Name, Data",
+                Detail = "One or more fields are not supposed to be used as filter parameters. Valid fields: CPF, Status, Name, Date",
                 Status = StatusCodes.Status400BadRequest
             });
 

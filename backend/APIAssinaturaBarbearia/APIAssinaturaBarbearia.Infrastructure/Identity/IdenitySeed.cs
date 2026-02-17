@@ -5,6 +5,7 @@ using APIAssinaturaBarbearia.Infrastructure.Identity.IdentityUsersUI;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Crypto.Macs;
 
 public static class IdentitySeed
 {   public static async Task SeedAsync(IServiceProvider serviceProvider)
@@ -13,7 +14,6 @@ public static class IdentitySeed
 
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Usuario>>();
-        var options = scope.ServiceProvider.GetRequiredService<IOptions<SeedOptions>>();
 
         const string adminRole = "Admin";
 
@@ -22,19 +22,19 @@ public static class IdentitySeed
             await roleManager.CreateAsync(new IdentityRole(adminRole));
         }
 
-        var adminUser = await userManager.FindByEmailAsync(options.Value.Email);
+        var adminUser = await userManager.FindByEmailAsync("admin@gmail.com");
 
         if (adminUser == null)
         {
             adminUser = new Usuario
             {
                 UserName = "admin",
-                Email = options.Value.Email,
+                Email = "admin@gmail.com",
                 Cpf = "12345678901",
                 SecurityStamp = Guid.NewGuid().ToString(),
             };
 
-            var result = await userManager.CreateAsync(adminUser, options.Value.Password);
+            var result = await userManager.CreateAsync(adminUser, "@Minhasenha123");
 
             if (result.Succeeded)
             {

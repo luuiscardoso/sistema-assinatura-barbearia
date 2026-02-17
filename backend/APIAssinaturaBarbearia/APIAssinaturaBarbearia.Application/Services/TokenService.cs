@@ -22,7 +22,7 @@ namespace APIAssinaturaBarbearia.Application.Services
             SecurityTokenDescriptor descriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(double.Parse(configuracoes["ValidadeTokenMinutos"])),
+                Expires = DateTime.UtcNow.AddMinutes(15),
                 SigningCredentials = assinatura
             };
 
